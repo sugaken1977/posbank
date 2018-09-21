@@ -11,7 +11,7 @@ class CheckoutForm extends React.Component {
     const { onCreateToken, zipcode, onCheckStripe, haveStripe, stripe, savedCards, onSelectCard, selectedCard } = this.props
 
     if(false){
-    	return  <form>
+    	return  <div>
     				<ul>
     					{
     						savedCards.map(card => {
@@ -22,7 +22,7 @@ class CheckoutForm extends React.Component {
     						})
     					}
     				</ul>
-    			</form>
+    			</div>
     	
     
 

@@ -17,7 +17,7 @@ const Signin = props => {
   
   if(redirectSignin) {
   return <Redirect to={{pathname: '/checkout'}} />;
-}
+  }
   return (
     <form onSubmit={handleSubmit(onSignin)}>
       <Field

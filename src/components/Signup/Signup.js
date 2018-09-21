@@ -9,24 +9,24 @@ const renderField = ({
   label,
   placeholder,
   type,
-  autocomplete,
+  autoComplete,
   meta: { asyncValidating, touched, error }
 }) => (
   <div>
     <label>{label}</label>
     <div className={asyncValidating ? 'async-validating' : ''}>
-      <input {...input} type={type} placeholder={placeholder} autocomplete={label}/>
+      <input {...input} type={type} placeholder={placeholder} autoComplete={label}/>
       {touched && error && <span>{error}</span>}
     </div>
   </div>
 )
 
-const SignUp = props => {
-  const { handleSubmit, pristine, reset, submitting, onSignup, redirectSignup } = props
+const Signup = props => {
+  const { handleSubmit, pristine, reset, submitting, onSignup, redirectSignup, onBack, onNext } = props
   
-if(redirectSignup) {
-  return <Redirect to={{pathname: '/checkout'}} />;
-}
+// if(redirectSignup) {
+//   return <Redirect to={{pathname: '/checkout'}} />;
+// }
 return (
     <form onSubmit={handleSubmit(onSignup)}>  
       <Field
@@ -133,12 +133,14 @@ return (
 
       <div>
 
+        <button type="button" disabled={submitting} onClick={onBack}>
+          Back
+        </button>
+
         <button type="submit" disabled={submitting}>
           Sign Up
         </button>
-        <button type="button" disabled={pristine || submitting} onClick={reset}>
-          Clear Values
-        </button>
+        
       </div>
     </form>
   )
@@ -146,7 +148,10 @@ return (
 
 export default reduxForm({
   form: 'signup', // a unique identifier for this form
+  //  onSubmitSuccess: (result, dispatch, props) => {
+  //   props.onNext()
+  // },
   validate,
   asyncValidate,
   asyncChangeFields: ['email']
-})(SignUp)
+})(Signup)

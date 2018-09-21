@@ -11,9 +11,22 @@ import {
 		HAVE_STRIPE,
 		SELECT_CARD,
 		AUTHENTICATED,
-		SIGN_OUT
+		SIGN_OUT,
+		SELECT_COIN,
+		SELECT_NODE_QUANTITY,
+		GENERATE_TRANSACTION_LOADING,
+		GENERATE_TRANSACTION_SUCCESS,
+		GENERATE_TRANSACTION_FAILED,
+		GET_INPUT_COIN,
+		GET_OUTPUT_COIN,
+		GET_INPUT_AMOUNT,
+		GET_WALLET_ADDRESS,
+		FETCH_ESTIMATED_OUTPUT
 		}
 from './constants';
+import {Decimal} from 'decimal.js';
+
+const sleep = ms => new Promise(resolve => setTimeout(resolve, ms))
 
 export const authenticate = () => ({
     type: AUTHENTICATED,
@@ -46,7 +59,7 @@ export const createToken = (event, stripe) => (dispatch, getState) =>{
 	const { userId } = getState().signupR
 
 	if(getState().signupR.userId){
-			user = Object.assign(getState().signupR, user)
+			// user = Object.assign(getState().signupR, user)
 			const { name, zipcode, state, city,
 	      line1, line2, userId, country } = getState().signupR
 			let promise = new Promise((resolve, reject) => {
@@ -96,13 +109,10 @@ export const createToken = (event, stripe) => (dispatch, getState) =>{
 export const signup = (values) => (dispatch) =>{
 	 dispatch({type: SIGNUP_LOADING, payload: true})
 
-	 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms))
-
 	  return sleep(1000).then(() => {
 	  
 	    const {email, name, password, gender, birthday, zipcode, state, city,
 	      line1, line2 } = values
-
 	    
 	    fetch('http://localhost:5001/signup',{
 	          method: 'post',
@@ -126,7 +136,7 @@ export const signup = (values) => (dispatch) =>{
 	    	// console.log(user)
 	    	if(user.UserId){
 	    		dispatch({type: SIGNUP_SUCCESS, payload: user})
-	    		setTimeout(dispatch(checkStripe(user.UserId)), 10)
+	    		setTimeout(() => dispatch(checkStripe(user.UserId)), 500) 
 	    	}
 
 	    })
@@ -188,3 +198,100 @@ export const selectCard = (id) => (dispatch, getState) => {
 		payload: getState().checkStripeR.savedCards.filter(card => card.id === id)
 	})
 }
+
+//SELECT NODE AND COIN
+export const selectNodeQuantity = (num) => ({
+	type: SELECT_NODE_QUANTITY,
+	payload: num
+})
+
+export const selectCoin = (coin) => (dispatch)=>{
+
+	dispatch({type: SELECT_COIN, payload: coin})
+}
+
+export const calculateProfit = () =>(dispatch, getState)=>{
+	sleep(500).then(()=>{
+		const { nodeQuantity } = getState().selectCoinR
+		
+	})
+}
+
+//GENERATE TRANSACTION
+ 
+export const getInputCoin = (coinName, type) => (dispatch, getState) => {
+	type? dispatch({type: GET_INPUT_COIN, payload: coinName})
+	: dispatch(({type: GET_OUTPUT_COIN, payload: coinName}))
+
+	sleep(500).then(() => {
+		const {from, to, inputAmount} = getState().getInOutCoinR
+		if(inputAmount){
+			fetch('http://localhost:5001/examount',{
+		 	method: 'post',
+	        headers: {'Content-Type': 'application/json'},
+	        body: JSON.stringify({
+	          from: from,
+	          to: to,
+	          amount: inputAmount
+	        })	
+		})
+		.then(response => response.json())
+		.then(data => dispatch({type: FETCH_ESTIMATED_OUTPUT, payload: data.result}))
+		}
+		
+	})
+}
+export const getWalletAddress = (text) => ({
+	type: GET_WALLET_ADDRESS, 
+	payload: text
+})
+
+
+export const getOutputAmount = (amount) => (dispatch, getState) => {
+
+	const { from, to } = getState().getInOutCoinR
+	
+	
+	if(amount){
+		return sleep(1000).then(()=>{
+		let foo = new Decimal(amount)
+		const inputAmount = foo.toNumber()
+		dispatch({type: GET_INPUT_AMOUNT, payload: inputAmount })
+		fetch('http://localhost:5001/examount',{
+		 	method: 'post',
+	        headers: {'Content-Type': 'application/json'},
+	        body: JSON.stringify({
+	          from: from,
+	          to: to,
+	          amount: inputAmount
+	        })	
+		})
+		.then(response => response.json())
+		.then(data => dispatch({type: FETCH_ESTIMATED_OUTPUT, payload: data.result}))
+	})
+	} 
+	
+	
+	
+
+}
+export const generateTransaction = () => (dispatch, getState) => {
+	dispatch({type: GENERATE_TRANSACTION_LOADING, payload: true })
+	const { from, to, inputAmount, address} = getState().getInOutCoinR
+	return sleep(1000).then(()=>{
+		fetch('http://localhost:5001/exchange',{
+		 	method: 'post',
+	        headers: {'Content-Type': 'application/json'},
+	        body: JSON.stringify({
+	          from: from,
+	          to: to,
+	          amount: inputAmount,
+	          address: address
+	        })	
+		})
+		.then(response => response.json())
+		.then(data => dispatch({type: GENERATE_TRANSACTION_SUCCESS, payload: data.result}))
+		.catch(err => dispatch({type: GENERATE_TRANSACTION_FAILED, payload: err}) )
+	})
+}
+

@@ -11,7 +11,17 @@ import {
 		HAVE_STRIPE,
 		SELECT_CARD,
 		AUTHENTICATED,
-		SIGN_OUT
+		SIGN_OUT,
+		SELECT_COIN,
+		SELECT_NODE_QUANTITY,
+		GENERATE_TRANSACTION_LOADING,
+		GENERATE_TRANSACTION_SUCCESS,
+		GENERATE_TRANSACTION_FAILED,
+		GET_INPUT_COIN,
+		GET_OUTPUT_COIN,
+		GET_INPUT_AMOUNT,
+		GET_WALLET_ADDRESS,
+		FETCH_ESTIMATED_OUTPUT
 		}
 from './constants';
 
@@ -191,3 +201,102 @@ export const selectCardR = (state = selectCardInitialState, action) => {
 			return state
 	}
 }
+
+const selectCoinInitialState ={
+	selectedCoin: '',
+	nodeQuantity: 0
+}
+
+export const selectCoinR = (state = selectCoinInitialState, action) => {
+	switch(action.type){
+		case SELECT_COIN:
+			return{
+				...state,
+				selectedCoin: action.payload
+			}
+		case SELECT_NODE_QUANTITY:
+			return{
+				...state,
+				nodeQuantity: action.payload
+
+			}
+		default:
+			return state
+	}
+}
+const getInOutCoinInitialState ={
+	from: 'btc',
+	to: 'zen',
+	inputAmount: 0,
+	outputAmount: 0,
+	address: ''
+}
+export const getInOutCoinR = (state = getInOutCoinInitialState, action) =>{
+	switch(action.type){
+		case GET_INPUT_COIN:
+			return {
+				...state,
+				from: action.payload
+			}
+		case GET_OUTPUT_COIN:
+			return {
+				...state,
+				to: action.payload
+			}
+		case GET_INPUT_AMOUNT:
+			return {
+				...state,
+				inputAmount: action.payload
+			}
+		case FETCH_ESTIMATED_OUTPUT:
+			return {
+				...state,
+				outputAmount: action.payload
+			}
+		case GET_WALLET_ADDRESS:
+			return {
+				...state,
+				address: action.payload
+			}
+		default:
+			return state
+	}
+}
+
+const generateTransactionInitialState ={
+	transactionId:'',
+	payInAddress: '',
+	payOutAddress: '',
+	from: '',
+    to: '',
+    amountToPayIn: '',
+    isGenerateTrLoading: false,
+    err: ''
+}
+
+export const generateTransactionR =(state=generateTransactionInitialState, action)=>{
+	switch(action.type){
+		case GENERATE_TRANSACTION_LOADING:
+			return {
+				...state,
+				isGenerateTrLoading: action.payload
+			}
+		case GENERATE_TRANSACTION_SUCCESS:
+			return {
+				...state,
+				transactionId: action.payload.id,
+				payInAddress: action.payload.payinAddress,
+				payOutAddress: action.payload.payoutAddress,
+				from: action.payload.currencyFrom,
+			    to: action.payload.currencyTo,
+			    amountToPayIn: action.payload.amountExpectedFrom
+			}
+		case GENERATE_TRANSACTION_FAILED:
+			return{
+				...state,
+				err: action.payload
+			}
+		default:
+			return state
+	}
+}	

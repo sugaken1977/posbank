@@ -12,7 +12,8 @@ import { createLogger } from 'redux-logger';
 import ReduxThunk from 'redux-thunk';
 
 import { reducer as formReducer } from 'redux-form'
-import { createTokenR, signupR, checkStripeR, selectCardR, signinR, authenticateR } from './store/reducers'
+import { createTokenR, signupR, checkStripeR, selectCardR, signinR, authenticateR,
+selectCoinR, getInOutCoinR, generateTransactionR } from './store/reducers'
 
 
 const logger = createLogger();
@@ -23,6 +24,9 @@ const rootReducer = combineReducers({
 	selectCardR,
 	signinR,
 	authenticateR,
+	selectCoinR,
+	getInOutCoinR,
+	generateTransactionR,
 	form: formReducer
 })
 const store = createStore(rootReducer, applyMiddleware(ReduxThunk, logger));

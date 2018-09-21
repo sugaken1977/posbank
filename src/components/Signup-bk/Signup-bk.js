@@ -1,10 +1,10 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import Coins from '../Coins/Coins'
-import WizardFormSecondPage from './WizardFormSecondPage'
-import WizardFormThirdPage from './WizardFormThirdPage'
+import Info from '../Info/Info'
+import Checkout from '../Checkout/Checkout'
 
-class WizardForm extends Component {
+class Signup extends Component {
   constructor(props) {
     super(props)
     this.nextPage = this.nextPage.bind(this)
@@ -22,30 +22,37 @@ class WizardForm extends Component {
   }
 
   render() {
-    const { onSubmit } = this.props
+
+    const { onSignup, onSelectCoin, selectedCoin, onselectNodeQuantity } = this.props
     const { page } = this.state
     return (
       <div>
-        {page === 1 && <WizardFormFirstPage onSubmit={this.nextPage} />}
-        {page === 2 && (
-          <WizardFormSecondPage
-            previousPage={this.previousPage}
-            onSubmit={this.nextPage}
+      <div>signup</div>
+      <div>
+        {page === 1 && (
+          <Coins onNext={this.nextPage} 
+                  onSelectCoin = { onSelectCoin }
+                  onselectNodeQuantity = { onselectNodeQuantity }
+        />)}
+      
+          {page === 2 && (
+          <Info
+            onBack={this.previousPage}
+            onSignup = { onSignup }
+            onNext = { this.nextPage }
           />
         )}
         {page === 3 && (
-          <WizardFormThirdPage
+          <Checkout
             previousPage={this.previousPage}
-            onSubmit={onSubmit}
           />
         )}
+
+      </div>
       </div>
     )
   }
 }
 
-WizardForm.propTypes = {
-  onSubmit: PropTypes.func.isRequired
-}
 
-export default WizardForm
+export default Signup
