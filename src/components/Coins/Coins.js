@@ -74,9 +74,7 @@ const Coins = props => {
 								<span className='mv1 mh1'>{`Node fee: ${nodeQuantity*coin.required} ${coin.name}`} </span>
 								<span className='mv1 mh1'>{`ROI: ${roundedRoi} %`} </span>
 								<span className='mv1 mh1'>{`POSBank fee: ${coin.serviceFee}`}</span>								
-								<span className='mv1 mh1'>Daily Profit: </span>
-								<span className='mv1 mh1'>{`Monthly Profit: ${mProfitUSD} USD`}</span>
-								<span className='mv1 mh1'>{`Annual Profit: ${aProfitUSD} USD`}</span>
+								
 							</li>
 				})
 				
