@@ -1,4 +1,4 @@
-* {
+/** {
   box-sizing: border-box;
 }
 
@@ -102,4 +102,4 @@ input:focus,
 .StripeElement.IdealBankElement,
 .StripeElement.PaymentRequestButton {
   padding: 0;
-}
+}*/

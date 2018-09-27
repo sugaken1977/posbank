@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@moneybutton/react-money-button": "^0.1.2",
     "decimal.js": "^10.0.1",
     "react": "^16.4.2",
     "react-dom": "^16.4.2",

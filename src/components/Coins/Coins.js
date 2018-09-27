@@ -43,8 +43,10 @@ const Coins = props => {
   return (
       <div>
       	<div>
-      		<label>Number of node</label>
-      		<input type='text' onChange = {onselectNodeQuantity}/>
+      		{
+      			// <label>Number of node</label>
+      		 //    <input type='text' onChange = {onselectNodeQuantity}/>
+      		}
       	</div>
 		<ul className='flex flex-column pa1'>	
 			{
@@ -64,7 +66,7 @@ const Coins = props => {
 									to='/signup'
 									className="no-underline white" 
 									onClick = { () => onSelectCoin(coin.name)}
-									title="Learn More">
+									title="Get 1 node">
 									Get
 									</NavLink>
 								</button>

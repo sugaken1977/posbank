@@ -14,6 +14,7 @@ import { connect } from 'react-redux';
 import { createToken, signup, checkStripe, selectCard, signin, authenticate, signout,
 selectCoin, selectNodeQuantity, getCoinList, getInputCoin, getOutputAmount, getWalletAddress, generateTransaction} from './store/actions';
 
+
 const mapStateToProps = (state) =>{
   return{
     tokenState: state.createTokenR,

@@ -3,20 +3,20 @@ import { Field, reduxForm } from 'redux-form'
 import validate from './validate'
 import asyncValidate from './asyncValidate'
 import { Redirect, NavLink } from 'react-router-dom'
-
+const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 const renderField = ({
   input,
   label,
-  placeholder,
   type,
   autoComplete,
-  meta: { asyncValidating, touched, error }
+  meta: { asyncValidating, touched, valid, error }
 }) => (
   <div>
     <label>{label}</label>
     <div className={asyncValidating ? 'async-validating' : ''}>
-      <input {...input} type={type} placeholder={placeholder} autoComplete={label}/>
+      <input {...input} type={type} placeholder={label} autoComplete={label}/>
       {touched && error && <span>{error}</span>}
+      {touched && valid && <span>✓</span>}
     </div>
   </div>
 )
@@ -24,9 +24,9 @@ const renderField = ({
 const Signup = props => {
   const { handleSubmit, pristine, reset, submitting, onSignup, redirectSignup, onBack, onNext } = props
   
-// if(redirectSignup) {
-//   return <Redirect to={{pathname: '/checkout'}} />;
-// }
+if(redirectSignup) {
+  return <Redirect to={{pathname: '/checkout'}} />;
+}
 return (
     <form onSubmit={handleSubmit(onSignup)}>  
         <Field
@@ -67,11 +67,11 @@ return (
 }
 
 export default reduxForm({
-  form: 'signup', // a unique identifier for this form
+  form: 'signup',
   //  onSubmitSuccess: (result, dispatch, props) => {
   //   props.onNext()
   // },
   validate,
   asyncValidate,
-  asyncChangeFields: ['email']
+  asyncBlurFields: ['email']
 })(Signup)

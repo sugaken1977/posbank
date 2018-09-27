@@ -46,19 +46,12 @@ export const createToken = (event, stripe) => (dispatch, getState) =>{
     dispatch({type: CREATE_TOKEN_LOADING, payload: true})
     	var user= {
     		userId: '1',
-	  		email: 'peter@gmail.com',
-	  		gender: "1", 
-	  		birthday: "1990-08-01T15:00:00.000Z", 
-	  		zipcode: "170-0011",
-	  		state: 'tokyo',
-	  		city: 'itabashi',
-	  		line1: 'sample',
-	  		line2: '103',
-	  		country: 'JP'
+	  		email: 'peter@gmail.com'
 	  	}
 	const { userId } = getState().signupR
-
-	if(getState().signupR.userId){
+	const test = true
+	// if(getState().signupR.userId){
+	if(test){	
 			// user = Object.assign(getState().signupR, user)
 			const { name, zipcode, state, city,
 	      line1, line2, userId, country } = getState().signupR
@@ -106,19 +99,23 @@ export const createToken = (event, stripe) => (dispatch, getState) =>{
 	}
 }
 
-export const signup = (values) => (dispatch) =>{
+export const signup = (values) => (dispatch, getState) =>{
+	
 	 dispatch({type: SIGNUP_LOADING, payload: true})
+	 const coin = getState().selectCoinR.selectedCoin
 
 	  return sleep(1000).then(() => {
 	  
 	    const {email, password } = values
+
 	    
 	    fetch('http://localhost:5001/signup',{
 	          method: 'post',
 	          headers: {'Content-Type': 'application/json'},
 	          body: JSON.stringify({
 	             email: email,
-	             password: password
+	             password: password,
+	             coin: coin
 	          })
 	        })
 	    .then(response => response.json())
@@ -171,7 +168,7 @@ export const checkStripe = (userId) => (dispatch, getState) => {
 	fetch(`http://localhost:5001/stripe/${userId}`)
 		.then(response => response.json())
 		.then(savedCards => {
-			console.log(savedCards)
+			// console.log(savedCards)
 			if(savedCards.id){
 				dispatch({type: HAVE_STRIPE, payload: savedCards})
 			} 
@@ -198,6 +195,7 @@ export const selectNodeQuantity = (num) => ({
 export const selectCoin = (coin) => (dispatch)=>{
 
 	dispatch({type: SELECT_COIN, payload: coin})
+
 }
 
 export const calculateProfit = () =>(dispatch, getState)=>{

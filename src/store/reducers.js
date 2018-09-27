@@ -204,7 +204,7 @@ export const selectCardR = (state = selectCardInitialState, action) => {
 
 const selectCoinInitialState ={
 	selectedCoin: '',
-	nodeQuantity: 0
+	nodeQuantity: 1
 }
 
 export const selectCoinR = (state = selectCoinInitialState, action) => {
@@ -218,7 +218,6 @@ export const selectCoinR = (state = selectCoinInitialState, action) => {
 			return{
 				...state,
 				nodeQuantity: action.payload
-
 			}
 		default:
 			return state
