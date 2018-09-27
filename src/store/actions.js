@@ -111,24 +111,14 @@ export const signup = (values) => (dispatch) =>{
 
 	  return sleep(1000).then(() => {
 	  
-	    const {email, name, password, gender, birthday, zipcode, state, city,
-	      line1, line2 } = values
+	    const {email, password } = values
 	    
 	    fetch('http://localhost:5001/signup',{
 	          method: 'post',
 	          headers: {'Content-Type': 'application/json'},
 	          body: JSON.stringify({
 	             email: email,
-	             name: name,
-	             password: password,
-	             gender: gender,
-	             birthday: birthday,
-	             zipcode: zipcode,
-	             state: state,
-	             city: city,
-	             line1: line1,
-	             line2: line2,
-	             country: 'JP'
+	             password: password
 	          })
 	        })
 	    .then(response => response.json())
@@ -213,7 +203,7 @@ export const selectCoin = (coin) => (dispatch)=>{
 export const calculateProfit = () =>(dispatch, getState)=>{
 	sleep(500).then(()=>{
 		const { nodeQuantity } = getState().selectCoinR
-		
+
 	})
 }
 

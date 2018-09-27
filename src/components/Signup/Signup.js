@@ -29,92 +29,12 @@ const Signup = props => {
 // }
 return (
     <form onSubmit={handleSubmit(onSignup)}>  
-      <Field
-      name="name"
-      type="text"
-      component={renderField}
-      placeholder="山田太郎"
-      label="お名前（全角）"
-    />
-
-    <div>
-      <label>性別</label>
-      <div>
-        <label>
-          <Field
-            name="gender"
-            component="input"
-            type="radio"
-            value="1"
-          />{' '}
-          男性
-        </label>
-        <label>
-          <Field
-            name="gender"
-            component="input"
-            type="radio"
-            value="2"
-          />{' '}
-          女性
-        </label>
-      </div>
-    </div>
-    <Field
-      name="birthday"
-      type="text"
-      component={renderField}
-      placeholder="YYYY-MM-DD"
-      label="生年月日"
-    />
-     
-     <Field
-      name="zipcode"
-      type="text"
-      component={renderField}
-      placeholder="170-0011"
-      label="郵便番号（半角数字）"
-    />
- 
-      <Field
-        name="state"
-        type="text"
-        component={renderField}
-        placeholder="東京都"
-        label="都道府県"
-      />
-
-        <Field
-          name="city"
-          type="text"
-          component={renderField}
-          placeholder="板橋区大和町"
-          label="市区町村"
-        />
-
-        <Field
-          name="line1"
-          type="text"
-          component={renderField}
-          placeholder="1-2-3"
-          label="丁番地"
-        />
-
-        <Field
-          name="line2"
-          type="text"
-          component={renderField}
-          placeholder="サンプルビル５４３号"
-          label="建物名"
-        />
-
         <Field
           name="email"
           type="text"
           component={renderField}
           label="メールアドレス"
         />
-
 
         <Field
           name="password"
@@ -124,7 +44,7 @@ return (
         />
 
         <Field
-          name="confirmPw"
+          name="pwConfirm"
           type="password"
           component={renderField}
           label="パスワード再入力"
