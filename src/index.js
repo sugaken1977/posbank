@@ -13,7 +13,7 @@ import ReduxThunk from 'redux-thunk';
 
 import { reducer as formReducer } from 'redux-form'
 import { createTokenR, signupR, checkStripeR, selectCardR, signinR, authenticateR,
-selectCoinR, getInOutCoinR, generateTransactionR } from './store/reducers'
+selectCoinR, getInOutCoinR, generateTransactionR, fetchActivationR, fetchExStatsR } from './store/reducers'
 
 
 const logger = createLogger();
@@ -27,6 +27,8 @@ const rootReducer = combineReducers({
 	selectCoinR,
 	getInOutCoinR,
 	generateTransactionR,
+	fetchActivationR,
+	fetchExStatsR,
 	form: formReducer
 })
 const store = createStore(rootReducer, applyMiddleware(ReduxThunk, logger));

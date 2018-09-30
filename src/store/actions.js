@@ -21,12 +21,19 @@ import {
 		GET_OUTPUT_COIN,
 		GET_INPUT_AMOUNT,
 		GET_WALLET_ADDRESS,
-		FETCH_ESTIMATED_OUTPUT
+		FETCH_ESTIMATED_OUTPUT,
+		FETCH_ACTIVATION_LOADING,
+		FETCH_ACTIVATION_SUCCESS,
+		FETCH_ACTIVATION_SUCCESS_NOT_FOUND,
+		FETCH_ACTIVATION_FAIL,
+		FETCH_EXSTATS_LOADING,
+		FETCH_EXSTATS_SUCCESS,
+		FETCH_EXSTATS_FAIL
 		}
 from './constants';
 import {Decimal} from 'decimal.js';
 
-const sleep = ms => new Promise(resolve => setTimeout(resolve, ms))
+import { sleep } from '../modules/modules'
 
 export const authenticate = () => ({
     type: AUTHENTICATED,
@@ -51,19 +58,14 @@ export const createToken = (event, stripe) => (dispatch, getState) =>{
 	const { userId } = getState().signupR
 	const test = true
 	// if(getState().signupR.userId){
+	// 	const { name, zipcode, state, city,
+	//       line1, line2, userId, country } = getState().signupR
 	if(test){	
 			// user = Object.assign(getState().signupR, user)
-			const { name, zipcode, state, city,
-	      line1, line2, userId, country } = getState().signupR
+			let userId = 666
 			let promise = new Promise((resolve, reject) => {
     		let token = stripe.createToken({
-    			name: name,
-    			address_state: state,
-    			address_city: city,
-    			address_zip: zipcode,
-    			address_line1: line1,
-    			address_line2: line2,
-    			address_country: 'country'
+    			name: 'noname'
     		})
     		token? resolve(token): reject('something wrong with stripe createToken()')  		
     	})
@@ -75,7 +77,7 @@ export const createToken = (event, stripe) => (dispatch, getState) =>{
 			      body: JSON.stringify(token)
 			  })
 		    	})
-		    .then(response =>  dispatch({type: CREATE_TOKEN_SUCCESS, payload: {response: response, complete:true}}))
+		    .then(response =>  dispatch({type: CREATE_TOKEN_SUCCESS, payload: response.ok}))
 		    .catch(err => dispatch({type: CREATE_TOKEN_FAILED, payload: err}))
 
 	} else if(getState().signinR.userId){
@@ -93,7 +95,7 @@ export const createToken = (event, stripe) => (dispatch, getState) =>{
 			      body: JSON.stringify({card: token})
 			  })
 		    	})
-		    .then(response =>  dispatch({type: CREATE_TOKEN_SUCCESS, payload: {response: response, complete:true}}))
+		    .then(response => dispatch({type: CREATE_TOKEN_SUCCESS, payload: response.ok}))
 		    .catch(err => dispatch({type: CREATE_TOKEN_FAILED, payload: err}))
     })
 	}
@@ -131,7 +133,27 @@ export const signup = (values) => (dispatch, getState) =>{
 		})//end of sleep 1000
 
 }//end of signup
+//ACTIVATION ACTION
 
+export const fetchActivation = (pathname) => (dispatch, getState) =>{
+	dispatch(({type: FETCH_ACTIVATION_LOADING, payload: true}))
+	
+		return fetch(`http://localhost:5001${pathname}`)
+			.then(response => response.json())
+			.then(data => {
+					// console.log(activated)
+					if(data.activated){
+						dispatch({type: FETCH_ACTIVATION_SUCCESS, payload: data})
+					} else{
+						dispatch({type: FETCH_ACTIVATION_SUCCESS_NOT_FOUND, payload: data})
+					}
+					
+				})
+			.catch(err => dispatch({type: FETCH_ACTIVATION_FAIL, payload: err}))
+
+
+		
+}//end of activation
 //SIGNIN ACTION
 
 export const signin = (values) => (dispatch) =>{
@@ -205,7 +227,7 @@ export const calculateProfit = () =>(dispatch, getState)=>{
 	})
 }
 
-//GENERATE TRANSACTION
+//transaction
  
 export const getInputCoin = (coinName, type) => (dispatch, getState) => {
 	type? dispatch({type: GET_INPUT_COIN, payload: coinName})
@@ -214,7 +236,7 @@ export const getInputCoin = (coinName, type) => (dispatch, getState) => {
 	sleep(500).then(() => {
 		const {from, to, inputAmount} = getState().getInOutCoinR
 		if(inputAmount){
-			fetch('http://localhost:5001/examount',{
+			fetch('http://localhost:5001/exchange-amount',{
 		 	method: 'post',
 	        headers: {'Content-Type': 'application/json'},
 	        body: JSON.stringify({
@@ -245,7 +267,7 @@ export const getOutputAmount = (amount) => (dispatch, getState) => {
 		let foo = new Decimal(amount)
 		const inputAmount = foo.toNumber()
 		dispatch({type: GET_INPUT_AMOUNT, payload: inputAmount })
-		fetch('http://localhost:5001/examount',{
+		fetch('http://localhost:5001/exchange-amount',{
 		 	method: 'post',
 	        headers: {'Content-Type': 'application/json'},
 	        body: JSON.stringify({
@@ -256,13 +278,10 @@ export const getOutputAmount = (amount) => (dispatch, getState) => {
 		})
 		.then(response => response.json())
 		.then(data => dispatch({type: FETCH_ESTIMATED_OUTPUT, payload: data.result}))
-	})
+		})
 	} 
-	
-	
-	
-
 }
+
 export const generateTransaction = () => (dispatch, getState) => {
 	dispatch({type: GENERATE_TRANSACTION_LOADING, payload: true })
 	const { from, to, inputAmount, address} = getState().getInOutCoinR
@@ -283,3 +302,24 @@ export const generateTransaction = () => (dispatch, getState) => {
 	})
 }
 
+export const fetchExStats = (redirect) => (dispatch, getState) =>{
+	dispatch({type: FETCH_EXSTATS_LOADING, payload: true })
+	redirect()
+	const { transactionId } = getState().generateTransactionR
+	sleep(1000).then(() =>{
+		fetch('http://localhost:5001/fetch-exchange-status', {
+		 	method: 'post',
+	        headers: {'Content-Type': 'application/json'},
+	        body: JSON.stringify({
+	          transactionId: transactionId
+	        })	
+		})
+		.then(response => response.json())
+		.then(data => {
+			dispatch({type: FETCH_EXSTATS_SUCCESS, payload: data.result})
+
+		})
+		.catch(err => dispatch({type: FETCH_EXSTATS_FAIL, payload: err}))
+	})
+	
+}

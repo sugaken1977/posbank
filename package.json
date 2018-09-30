@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@moneybutton/react-money-button": "^0.1.2",
     "decimal.js": "^10.0.1",
+    "qrcode.react": "^0.8.0",
     "react": "^16.4.2",
     "react-dom": "^16.4.2",
     "react-redux": "^5.0.7",

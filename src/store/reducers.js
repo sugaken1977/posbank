@@ -21,7 +21,14 @@ import {
 		GET_OUTPUT_COIN,
 		GET_INPUT_AMOUNT,
 		GET_WALLET_ADDRESS,
-		FETCH_ESTIMATED_OUTPUT
+		FETCH_ESTIMATED_OUTPUT,
+		FETCH_ACTIVATION_LOADING,
+		FETCH_ACTIVATION_SUCCESS,
+		FETCH_ACTIVATION_SUCCESS_NOT_FOUND,
+		FETCH_ACTIVATION_FAIL,
+		FETCH_EXSTATS_LOADING,
+		FETCH_EXSTATS_SUCCESS,
+		FETCH_EXSTATS_FAIL
 		}
 from './constants';
 
@@ -49,12 +56,12 @@ export const authenticateR = (state = initialAuthState, action) => {
 }
 
 const tokenInitialState = {
-	complete: false,
+	stripeComplete: false,
 	isLoading: false,
 	error: ''
 }
 
-
+//token
 export const createTokenR = (state = tokenInitialState, action) =>{
 	switch(action.type){
 		case CREATE_TOKEN_LOADING:
@@ -65,13 +72,13 @@ export const createTokenR = (state = tokenInitialState, action) =>{
 		case CREATE_TOKEN_SUCCESS:
 			return {
 				...state,
-				complete: action.payload.complete,
-				response: action.payload.response
+				stripeComplete: action.payload,
+				isloading: false
 			}
 		case CREATE_TOKEN_FAILED:
 			return{
 				...state,
-				error: action.payload.action
+				error: action.payload
 			}
 		default:
 			return state;
@@ -137,7 +144,41 @@ const signinInitialState = {
 	redirectSignin: false,
 	error:''
 }
+//fetch activation
+const fetchActivationInitialState ={
+	activated: null,
+	isFALoading: false,
+	error: ''
+}
 
+export const fetchActivationR = (state = fetchActivationInitialState, action)=>{
+	switch(action.type){
+		case FETCH_ACTIVATION_LOADING:
+			return {
+				...state,
+				isFALoading: action.payload
+			}
+		case FETCH_ACTIVATION_SUCCESS:
+			return {
+				...state,
+				activated: action.payload.activated,
+				isFALoading: false	
+			}
+		case FETCH_ACTIVATION_SUCCESS_NOT_FOUND:
+			return {
+				...state,
+				activated:  action.payload.activated,
+				isFALoading: false
+			}
+		case FETCH_ACTIVATION_FAIL:
+			return {
+				...state,
+				error: action.payload
+			}
+		default:
+			return state
+	}
+}
 
 export const signinR = (state =signinInitialState, action) =>{
 	switch(action.type){
@@ -298,4 +339,32 @@ export const generateTransactionR =(state=generateTransactionInitialState, actio
 		default:
 			return state
 	}
-}	
+}
+const fetchExStatsInitialState = {
+	exStatus: '',
+	isFExStatsLoading: false,
+	error: ''
+}
+
+export const fetchExStatsR = (state = fetchExStatsInitialState, action)=>{
+	switch(action.type){
+		case FETCH_EXSTATS_LOADING:
+			return {
+				...state,
+				isFExStatsLoading: true,
+			}
+		case FETCH_EXSTATS_SUCCESS:
+			return {
+				...state,
+				exStatus: action.payload,
+				isFExStatsLoading: false,
+			}
+		case FETCH_EXSTATS_FAIL:
+			return {
+				...state,
+				error: action.payload
+			}
+		default:
+			return state
+	}
+}

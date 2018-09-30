@@ -7,19 +7,23 @@ import Coins from './components/Coins/Coins';
 import Dashboard from './components/Dashboard/Dashboard';
 import Exchange from './components/Exchange/Exchange';
 import Send from './components/Send/Send';
+import ExchangeStatus from './components/ExchangeStatus/ExchangeStatus';
+import Direction from './components/Direction/Direction';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import 'tachyons';
 
 import { connect } from 'react-redux';
 import { createToken, signup, checkStripe, selectCard, signin, authenticate, signout,
-selectCoin, selectNodeQuantity, getCoinList, getInputCoin, getOutputAmount, getWalletAddress, generateTransaction} from './store/actions';
+selectCoin, selectNodeQuantity, getCoinList, getInputCoin, getOutputAmount, getWalletAddress, 
+fetchActivation, generateTransaction, fetchExStats} from './store/actions';
 
 
 const mapStateToProps = (state) =>{
   return{
-    tokenState: state.createTokenR,
+    stripeComplete: state.createTokenR.stripeComplete,
     redirectSignup: state.signupR.redirectSignup,
     zipcode: state.signupR.zipcode,
+    verifiedHash: state.signupR.VerifiedHash,
     redirectSignin: state.signinR.redirectSignin,
     savedCards: state.checkStripeR.savedCards,
     haveStripe: state.checkStripeR.haveStripe,
@@ -29,7 +33,11 @@ const mapStateToProps = (state) =>{
     nodeQuantity: state.selectCoinR.nodeQuantity,
     outputAmount: state.getInOutCoinR.outputAmount,
     transactionState: state.generateTransactionR,
-    transactionId: state.generateTransactionR.transactionId
+    transactionId: state.generateTransactionR.transactionId,
+    activated: state.fetchActivationR.activated,
+    isFALoading: state.fetchActivationR.isFALoading,
+    exStatus: state.fetchExStatsR.exStatus,
+    isFExStatsLoading: state.fetchExStatsR.isFExStatsLoading
   }
 }
 const mapDispatchToProps = (dispatch)=>{
@@ -46,16 +54,19 @@ const mapDispatchToProps = (dispatch)=>{
     onGetInputCoin: (coinName, type) => dispatch(getInputCoin(coinName, type)),
     onGetOutputAmount: (event)=>dispatch(getOutputAmount(event.target.value)),
     onGetWalletAddress: (event)=>dispatch(getWalletAddress(event.target.value)),
-    onGenerateTransaction: ()=>dispatch(generateTransaction())
+    onGenerateTransaction: ()=>dispatch(generateTransaction()),
+    onFetchActivation: (pathname) => dispatch(fetchActivation(pathname)),
+    onFetchExStats: (redirect)=>dispatch(fetchExStats(redirect))
   }
 }
 class App extends Component {
 
   render() {
-     const { onCreateToken, onSignup, onSignin, redirectSignup, zipcode, onCheckStripe, savedCards, 
+     const { onCreateToken,stripeComplete, onSignup, onSignin, redirectSignup, verifiedHash, zipcode, onCheckStripe, savedCards, 
       haveStripe, selectedCard, onSelectCard, redirectSignin, isAuthenticated, signout, selectedCoin,
       onSelectCoin, onselectNodeQuantity, onGetInputCoin, onGetOutputAmount, onGetWalletAddress, 
-      onGenerateTransaction, transactionState, transactionId, outputAmount, nodeQuantity} = this.props
+      onGenerateTransaction, transactionState, transactionId, outputAmount, nodeQuantity, onFetchActivation,
+      activated, isFALoading, exStatus, isFExStatsLoading, onFetchExStats} = this.props
     return (
      <Router> 
       <div className="App">
@@ -72,6 +83,7 @@ class App extends Component {
                 haveStripe = { haveStripe }
                 selectedCard = { selectedCard }
                 onSelectCard = { onSelectCard }
+                stripeComplete = { stripeComplete }
                 />
                }
           } />
@@ -124,6 +136,33 @@ class App extends Component {
                 (props) => {
                   return <Send {...props} 
                     transactionState = { transactionState }
+                    onFetchExStats = { onFetchExStats }
+
+                  />
+                }
+              } />
+
+              <Route path='/exchange-status' exact
+               render={
+                (props) => {
+                  return <ExchangeStatus {...props} 
+                    exStatus = { exStatus }
+                    
+                  />
+                }
+              } />
+
+              {
+                // Direction route for directing after email verification
+              }
+               <Route path='/verify/:verifiedHash' exact
+               render={
+                (props) => {
+                  return <Direction {...props} 
+                      verifiedHash = {verifiedHash}
+                      activated = { activated }
+                      onFetchActivation = { onFetchActivation }
+                      isFALoading = { isFALoading }
                   />
                 }
               } />
@@ -134,6 +173,8 @@ class App extends Component {
                   return <Dashboard {...props} isAuthenticated = { isAuthenticated } signout />
                 }
               } />
+
+
         </Switch>
 
       </div>
