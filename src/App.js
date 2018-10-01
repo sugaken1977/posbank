@@ -3,6 +3,7 @@ import './App.css';
 import Checkout from './components/Checkout/Checkout';
 import Signin from './components/Signin/Signin';
 import Signup from './components/Signup/Signup';
+import Navigation from './components/Navigation/Navigation';
 import Coins from './components/Coins/Coins';
 import Dashboard from './components/Dashboard/Dashboard';
 import Exchange from './components/Exchange/Exchange';
@@ -13,9 +14,9 @@ import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import 'tachyons';
 
 import { connect } from 'react-redux';
-import { createToken, signup, checkStripe, selectCard, signin, authenticate, signout,
+import { createToken, signup, checkStripe, selectCard, signin, signout,
 selectCoin, selectNodeQuantity, getCoinList, getInputCoin, getOutputAmount, getWalletAddress, 
-fetchActivation, generateTransaction, fetchExStats} from './store/actions';
+fetchActivation, generateTransaction, fetchExStats, fetchOrders} from './store/actions';
 
 
 const mapStateToProps = (state) =>{
@@ -37,7 +38,9 @@ const mapStateToProps = (state) =>{
     activated: state.fetchActivationR.activated,
     isFALoading: state.fetchActivationR.isFALoading,
     exStatus: state.fetchExStatsR.exStatus,
-    isFExStatsLoading: state.fetchExStatsR.isFExStatsLoading
+    isFExStatsLoading: state.fetchExStatsR.isFExStatsLoading,
+    coin: state.fetchOrdersR.coin,
+    isFOLoading: state.fetchOrdersR.isFOLoading
   }
 }
 const mapDispatchToProps = (dispatch)=>{
@@ -48,7 +51,6 @@ const mapDispatchToProps = (dispatch)=>{
     onSelectCard: (id) =>dispatch(selectCard(id)),
     onSignin: (values) => dispatch(signin(values)),
     onSignout:  () => dispatch(signout()),
-    onAuthenticate: () => dispatch(authenticate()),
     onSelectCoin: (coin) => dispatch(selectCoin(coin)),
     onselectNodeQuantity: (event) => dispatch(selectNodeQuantity(event.target.value)),
     onGetInputCoin: (coinName, type) => dispatch(getInputCoin(coinName, type)),
@@ -56,26 +58,34 @@ const mapDispatchToProps = (dispatch)=>{
     onGetWalletAddress: (event)=>dispatch(getWalletAddress(event.target.value)),
     onGenerateTransaction: ()=>dispatch(generateTransaction()),
     onFetchActivation: (pathname) => dispatch(fetchActivation(pathname)),
-    onFetchExStats: (redirect)=>dispatch(fetchExStats(redirect))
+    onFetchExStats: (redirect)=>dispatch(fetchExStats(redirect)),
+    onFetchOrders: () =>dispatch(fetchOrders())
   }
 }
 class App extends Component {
 
   render() {
-     const { onCreateToken,stripeComplete, onSignup, onSignin, redirectSignup, verifiedHash, zipcode, onCheckStripe, savedCards, 
-      haveStripe, selectedCard, onSelectCard, redirectSignin, isAuthenticated, signout, selectedCoin,
-      onSelectCoin, onselectNodeQuantity, onGetInputCoin, onGetOutputAmount, onGetWalletAddress, 
+     const { onCreateToken,stripeComplete, onSignup, onSignin, isAuthenticated, onSignout, 
+      redirectSignup, verifiedHash, zipcode, onCheckStripe, savedCards, haveStripe, selectedCard, onSelectCard, redirectSignin,  
+      selectedCoin, onSelectCoin, onselectNodeQuantity, onGetInputCoin, onGetOutputAmount, onGetWalletAddress, 
       onGenerateTransaction, transactionState, transactionId, outputAmount, nodeQuantity, onFetchActivation,
-      activated, isFALoading, exStatus, isFExStatsLoading, onFetchExStats} = this.props
+      activated, isFALoading, exStatus, isFExStatsLoading, onFetchExStats, coin, onFetchOrders, isFOLoading} = this.props
     return (
      <Router> 
       <div className="App">
-        <h1>POSbank</h1>
+       <Navigation onSignout = { onSignout } isAuthenticated = { isAuthenticated } />
         <Switch>
+          <Route path='/dashboard' exact
+              render = {
+                (props) => {
+                  return <Dashboard { ...props } isAuthenticated = { isAuthenticated } />
+                }
+              } />
+
           <Route path='/checkout' exact
-            render= {
+            render = {
               (props) => {
-                return <Checkout {...props}
+                return <Checkout { ...props }
                 onCreateToken = { onCreateToken } 
                 zipcode={ zipcode }
                 onCheckStripe = { onCheckStripe }
@@ -84,6 +94,10 @@ class App extends Component {
                 selectedCard = { selectedCard }
                 onSelectCard = { onSelectCard }
                 stripeComplete = { stripeComplete }
+                onFetchOrders = { onFetchOrders }
+                coin = { coin }
+                isFOLoading = { isFOLoading }
+                isAuthenticated = { isAuthenticated }
                 />
                }
           } />
@@ -91,13 +105,16 @@ class App extends Component {
           <Route path='/signin' exact
             render={
               (props) => {
-                return <Signin {...props} onSignin = { onSignin } redirectSignin = { redirectSignin }/>
+                return <Signin { ...props } 
+                onSignin = { onSignin } 
+                redirectSignin = { redirectSignin }
+                />
               }
             } />  
              <Route path='/choosecoin' exact
             render={
               (props) => {
-                return <Coins {...props} 
+                return <Coins { ...props } 
                 selectedCoin = { selectedCoin } 
                 onSelectCoin = { onSelectCoin }
                 nodeQuantity = { nodeQuantity }
@@ -109,7 +126,7 @@ class App extends Component {
             <Route path='/signup' exact
               render={
                 (props) =>{
-                  return <Signup {...props} onSignup = { onSignup } 
+                  return <Signup { ...props } onSignup = { onSignup } 
                   redirectSignup ={ redirectSignup }
                   selectedCoin = { selectedCoin }
                   onSelectCoin = { onSelectCoin }
@@ -167,12 +184,7 @@ class App extends Component {
                 }
               } />
 
-              <Route path='/dashboard/:userId' exact
-              render={
-                (props) =>{
-                  return <Dashboard {...props} isAuthenticated = { isAuthenticated } signout />
-                }
-              } />
+              
 
 
         </Switch>

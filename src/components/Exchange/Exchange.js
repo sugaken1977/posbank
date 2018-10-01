@@ -65,16 +65,7 @@ const Exchange = props => {
 	  		</div>
 	  		<div  className='flex flex-row w-50'>
 		 		<span className='w-70 bg-light-gray tc pv2'>{outputAmount}</span>
-		  		{
-		  		// <Field
-			   //      name="OutputCoin"
-			   //      type="text"
-			   //      value={outputAmount}
-			   //      component={renderField2}
-			   //      placeholder="You will recieve"
-			   //      label={`Your ${selectedCoin} wallet`}
-			   //    />
-			  }
+		  		
 		  		<div className='mh1 w-30'>
 		  			<CoinList selectInputCoin = {!selectInputCoin} 
 		  			onGetInputCoin ={onGetInputCoin}

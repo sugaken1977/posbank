@@ -5,14 +5,30 @@ import { Redirect } from 'react-router-dom'
 
 
 class Checkout extends Component {
-
+	
+	componentDidMount(){
+		this.props.onFetchOrders()
+	}
 	render(){
-		const { onCreateToken, zipcode, onCheckStripe, savedCards, haveStripe, selectedCard, onSelectCard, stripeComplete } = this.props
+		const { onCreateToken, zipcode, onCheckStripe, savedCards, haveStripe, selectedCard, onSelectCard, stripeComplete,
+		 onFetchOrders, coin, isFOLoading, isAuthenticated} = this.props
+		 // console.log(isAuthenticated)
 		if(stripeComplete){
 			return <Redirect to={{pathname: '/exchange'}} />;
 		}
-		return(
+		return isAuthenticated? isFOLoading? <h1>Loading...</h1>
+		: coin? (
 			<div>
+				<div>
+					<div className='mv2'>
+						<span>Masternode's name: </span>
+						<span>{coin}</span>
+					</div>
+					<div className='mv2'>
+						<span>Node quantity: </span>
+						<span>1</span>
+					</div>
+				</div>
 				<StripeCheckout onCreateToken = { onCreateToken} 
 		          zipcode ={ zipcode }
 		          onCheckStripe = { onCheckStripe }
@@ -21,6 +37,7 @@ class Checkout extends Component {
 		          selectedCard = { selectedCard }
 		          onSelectCard = { onSelectCard }
 				 />
+				
 				{
 					// <MoneyButton
 			  //     to="some.friend@example.com"
@@ -31,7 +48,9 @@ class Checkout extends Component {
 			  //   />
 			}
 			</div>
-		);
+		)
+		: <h1>No masternode detected</h1>
+		: <h1>Please sign in or sign up</h1>
 	}
 }
 

@@ -28,7 +28,10 @@ import {
 		FETCH_ACTIVATION_FAIL,
 		FETCH_EXSTATS_LOADING,
 		FETCH_EXSTATS_SUCCESS,
-		FETCH_EXSTATS_FAIL
+		FETCH_EXSTATS_FAIL,
+		FETCH_ORDERS_LOADING,
+		FETCH_ORDERS_SUCCESS,
+		FETCH_ORDERS_FAIL
 		}
 from './constants';
 import {Decimal} from 'decimal.js';
@@ -100,7 +103,7 @@ export const createToken = (event, stripe) => (dispatch, getState) =>{
     })
 	}
 }
-
+// sign up
 export const signup = (values) => (dispatch, getState) =>{
 	
 	 dispatch({type: SIGNUP_LOADING, payload: true})
@@ -125,7 +128,7 @@ export const signup = (values) => (dispatch, getState) =>{
 	    	// console.log(user)
 	    	if(user.UserId){
 	    		dispatch({type: SIGNUP_SUCCESS, payload: user})
-	    		setTimeout(() => dispatch(checkStripe(user.UserId)), 500) 
+	    		dispatch(checkStripe(user.UserId))
 	    	}
 
 	    })
@@ -133,7 +136,8 @@ export const signup = (values) => (dispatch, getState) =>{
 		})//end of sleep 1000
 
 }//end of signup
-//ACTIVATION ACTION
+
+// activation
 
 export const fetchActivation = (pathname) => (dispatch, getState) =>{
 	dispatch(({type: FETCH_ACTIVATION_LOADING, payload: true}))
@@ -144,6 +148,7 @@ export const fetchActivation = (pathname) => (dispatch, getState) =>{
 					// console.log(activated)
 					if(data.activated){
 						dispatch({type: FETCH_ACTIVATION_SUCCESS, payload: data})
+						dispatch(authenticate()) // auto sign in after verification
 					} else{
 						dispatch({type: FETCH_ACTIVATION_SUCCESS_NOT_FOUND, payload: data})
 					}
@@ -154,34 +159,35 @@ export const fetchActivation = (pathname) => (dispatch, getState) =>{
 
 		
 }//end of activation
-//SIGNIN ACTION
+
+// sign in
 
 export const signin = (values) => (dispatch) =>{
 	dispatch(({type: SIGNIN_LOADING, payload: true}))
-	const sleep = ms => new Promise(resolve => setTimeout(resolve, ms))
+	// wait 1s for redux-form to load values
+	sleep(1000).then(() =>{
+		 const {email, password } = values
 
-
-  return sleep(1000).then(() => {
-    // console.log(values)
-    // simulate server latency
-    const {email, password } = values
-
-    fetch('http://localhost:5001/signin',{
-        method: 'post',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({
-          email: email,
-          password: password
-        })
-      })
-          .then(response => response.json())
-          .then(user => {
-          	console.log(user)
-           	return dispatch(({type: SIGNIN_SUCCESS, payload: user}))
-          })
-          .catch(err => dispatch(({type: SIGNIN_FAILED, payload: err})))
-})
-
+	    fetch('http://localhost:5001/signin',{
+	        method: 'post',
+	        headers: {'Content-Type': 'application/json'},
+	        body: JSON.stringify({
+	          email: email,
+	          password: password
+	        })//end of body
+	      })//end fetch
+	          .then(response => response.json())
+	          .then(data => {
+	          	console.log(data)
+	          	if(data.UserId) {
+	          		dispatch({type: SIGNIN_SUCCESS, payload: data})
+	          		dispatch(authenticate())
+	          	} else{
+	          		dispatch({type: SIGNIN_FAILED, payload: data})
+	          	}	          	
+	          })//end user
+	          .catch(err => dispatch({type: SIGNIN_FAILED, payload: err}))
+		})
 }
 
 export const checkStripe = (userId) => (dispatch, getState) => {
@@ -220,14 +226,30 @@ export const selectCoin = (coin) => (dispatch)=>{
 
 }
 
-export const calculateProfit = () =>(dispatch, getState)=>{
-	sleep(500).then(()=>{
-		const { nodeQuantity } = getState().selectCoinR
+// export const calculateProfit = () =>(dispatch, getState)=>{
+// 	sleep(500).then(()=>{
+// 		const { nodeQuantity } = getState().selectCoinR
 
+// 	})
+// }
+
+export const fetchOrders = () => (dispatch, getState) =>{
+	let userId 
+	let promise = new Promise(resolve => resolve(userId = getState().fetchActivationR.userId))
+	
+	promise.then(userId => {
+		dispatch({type: FETCH_ORDERS_LOADING, payload: true })
+		return fetch(`http://localhost:5001/fetch-orders/${userId}`)
+			.then(response => response.json())
+			.then(data => {
+				// console.log(data)
+				dispatch({type: FETCH_ORDERS_SUCCESS, payload: data[0] })
+			})
+			.catch(err => dispatch({type: FETCH_ORDERS_FAIL, payload: err}))
 	})
 }
 
-//transaction
+// transaction
  
 export const getInputCoin = (coinName, type) => (dispatch, getState) => {
 	type? dispatch({type: GET_INPUT_COIN, payload: coinName})
@@ -301,7 +323,7 @@ export const generateTransaction = () => (dispatch, getState) => {
 		.catch(err => dispatch({type: GENERATE_TRANSACTION_FAILED, payload: err}) )
 	})
 }
-
+// fetch exchange status (transaction status)
 export const fetchExStats = (redirect) => (dispatch, getState) =>{
 	dispatch({type: FETCH_EXSTATS_LOADING, payload: true })
 	redirect()

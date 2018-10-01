@@ -28,7 +28,10 @@ import {
 		FETCH_ACTIVATION_FAIL,
 		FETCH_EXSTATS_LOADING,
 		FETCH_EXSTATS_SUCCESS,
-		FETCH_EXSTATS_FAIL
+		FETCH_EXSTATS_FAIL,
+		FETCH_ORDERS_LOADING,
+		FETCH_ORDERS_SUCCESS,
+		FETCH_ORDERS_FAIL
 		}
 from './constants';
 
@@ -42,8 +45,7 @@ export const authenticateR = (state = initialAuthState, action) => {
 		case AUTHENTICATED:
 			return{
 				...state,
-				isAuthenticated: action.payload
-				
+				isAuthenticated: action.payload		
 			};
 		case SIGN_OUT:
 			return{
@@ -61,7 +63,7 @@ const tokenInitialState = {
 	error: ''
 }
 
-//token
+// token
 export const createTokenR = (state = tokenInitialState, action) =>{
 	switch(action.type){
 		case CREATE_TOKEN_LOADING:
@@ -84,7 +86,7 @@ export const createTokenR = (state = tokenInitialState, action) =>{
 			return state;
 	}
 }
-
+// sign up
 const signupInitialState ={
 	userId: '',
 	name: '',
@@ -131,21 +133,41 @@ export const signupR = (state = signupInitialState, action)=>{
 	}
 }
 
-const signinInitialState = {
+
+//fetch orders
+export const fetchOrdersInitialState = {
 	userId: '',
-	name: '',
-	gender: '',
-	zipcode: '',
-	state: '',
-	city: '',
-	line1: '',
-	line2: '',
-	signinLoading: false,
-	redirectSignin: false,
-	error:''
+	isFOLoading: false, // FO= fetch order
+	coin: '', // user's selected coin which saved to db
+	error: ''
+}
+
+export const fetchOrdersR = (state = fetchOrdersInitialState, action) =>{
+	switch(action.type){
+		case FETCH_ORDERS_LOADING: 
+			return {
+				...state,
+				isFOLoading: true
+			}
+		case FETCH_ORDERS_SUCCESS:
+			return {
+				...state,
+				userId: action.payload.UserId,
+				coin: action.payload.Coin,
+				isFOLoading: false
+			}
+		case FETCH_ORDERS_FAIL:
+			return {
+				...state,
+				error: action.payload
+			}
+		default:
+			return state
+	}
 }
 //fetch activation
 const fetchActivationInitialState ={
+	userId: '',
 	activated: null,
 	isFALoading: false,
 	error: ''
@@ -161,6 +183,7 @@ export const fetchActivationR = (state = fetchActivationInitialState, action)=>{
 		case FETCH_ACTIVATION_SUCCESS:
 			return {
 				...state,
+				userId: action.payload.userId,
 				activated: action.payload.activated,
 				isFALoading: false	
 			}
@@ -178,6 +201,20 @@ export const fetchActivationR = (state = fetchActivationInitialState, action)=>{
 		default:
 			return state
 	}
+}
+// sign in
+const signinInitialState = {
+	userId: '',
+	name: '',
+	gender: '',
+	zipcode: '',
+	state: '',
+	city: '',
+	line1: '',
+	line2: '',
+	signinLoading: false,
+	redirectSignin: false,
+	error:''
 }
 
 export const signinR = (state =signinInitialState, action) =>{
@@ -203,6 +240,11 @@ export const signinR = (state =signinInitialState, action) =>{
 				...state,
 				error: action.payload
 			}
+		case SIGN_OUT:
+			return {
+				...state,
+				redirectSignin: false
+			}
 		default:
 			return state
 	}
@@ -227,7 +269,7 @@ export const checkStripeR = (state = haveStripeInitialState, action) => {
 			return state	
 		}
 }
-
+// get user card for stripe
 const selectCardInitialState = {
 	selectedCard: ''
 }
@@ -242,7 +284,7 @@ export const selectCardR = (state = selectCardInitialState, action) => {
 			return state
 	}
 }
-
+// get coin that users select for nodes
 const selectCoinInitialState ={
 	selectedCoin: '',
 	nodeQuantity: 1
@@ -264,6 +306,7 @@ export const selectCoinR = (state = selectCoinInitialState, action) => {
 			return state
 	}
 }
+// get user's input coin
 const getInOutCoinInitialState ={
 	from: 'btc',
 	to: 'zen',
@@ -302,7 +345,7 @@ export const getInOutCoinR = (state = getInOutCoinInitialState, action) =>{
 			return state
 	}
 }
-
+// generate transaction
 const generateTransactionInitialState ={
 	transactionId:'',
 	payInAddress: '',
@@ -340,11 +383,14 @@ export const generateTransactionR =(state=generateTransactionInitialState, actio
 			return state
 	}
 }
+
+// fetch exchange status (transaction status)
 const fetchExStatsInitialState = {
 	exStatus: '',
 	isFExStatsLoading: false,
 	error: ''
 }
+
 
 export const fetchExStatsR = (state = fetchExStatsInitialState, action)=>{
 	switch(action.type){

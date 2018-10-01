@@ -13,10 +13,10 @@ const renderField = ({ input, label, type, meta: { touched, error } }) => (
 )
 
 const Signin = props => {
-  const { error, handleSubmit, pristine, reset, submitting, onSignin, redirectSignin } = props
+  const { error, handleSubmit, pristine, reset, submitting, onSignin, redirectSignin} = props
   
   if(redirectSignin) {
-  return <Redirect to={{pathname: '/checkout'}} />;
+  return <Redirect to={{pathname: '/dashboard'}} />;
   }
   return (
     <form onSubmit={handleSubmit(onSignin)}>

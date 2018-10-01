@@ -1,5 +1,6 @@
 import React from 'react'
 import Select from 'react-select'
+import { sleep } from '../../modules/modules'
 let options = [
   { value: 'chocolate', label: 'Chocolate' },
   { value: 'strawberry', label: 'Strawberry' },
@@ -8,7 +9,7 @@ let options = [
 
 const getCoinListInitialState ={
 	coinList: [],
-	isGetCoinLoading: false,
+	isGetCoinLoading: true,
 	err: ''
 }
 
@@ -59,7 +60,7 @@ class CoinList extends React.Component {
 					return coinList
 				})
 				this.setState({coinList: coinList})
-		
+				sleep(1000).then(()=>this.setState({isGetCoinLoading: false}))
 			}
 		})
 		.catch(err => console.log(err))
@@ -70,17 +71,20 @@ class CoinList extends React.Component {
 	}
 	render(){
 		const { onGetInputCoin, selectInputCoin }= this.props
+		// const { isGetCoinLoading }= this.state
 		// console.log(this.state.coinList[0])
-		return <Select
-				defaultValue={this.state.coinList[0]} 
-				options={this.state.coinList} 
-				formatGroupLabel={formatGroupLabel}
-				onChange={(...args) => {
-	              	onGetInputCoin(args[0].value, selectInputCoin)
+		let zen = 'zen'
+		return selectInputCoin? <Select
+			defaultInputValue={zen}
+			options={this.state.coinList} 
+			formatGroupLabel={formatGroupLabel}
+			onChange={(...args) => {
+              	onGetInputCoin(args[0].value, selectInputCoin)
 
-	            	}
-	          	}
-	         /> 
+            	}
+          	}
+         />
+         :<span>{}</span>
 
 	}
 }
