@@ -13,7 +13,7 @@ class OutputCoins extends Component{
 	
 	async componentDidMount(){
 		let coin
-		await this.props.onFetchOrders() //get the selected coin from db
+		this.props.onFetchOrders() //get the selected coin from db
 		let promise1 = new Promise((resolve, reject) => this.props.coin? resolve(coin = this.props.coin)
 			: reject('coin is not Fetched')
 			)

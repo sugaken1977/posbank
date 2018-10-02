@@ -40,7 +40,7 @@ from './constants';
 import {Decimal} from 'decimal.js';
 import env from '../config/env';
 import { sleep } from '../modules/modules'
-
+console.log(env.rootUrl)
 export const authenticate = () => ({
     type: AUTHENTICATED,
     payload: true

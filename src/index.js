@@ -3,13 +3,13 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import registerServiceWorker from './registerServiceWorker';
-
+import env from './config/env';
 import {StripeProvider} from 'react-stripe-elements';
 
 import { createStore, applyMiddleware, combineReducers } from 'redux';
 import { Provider } from 'react-redux';
-import { createLogger } from 'redux-logger';
-import ReduxThunk from 'redux-thunk';
+
+
 
 import { PersistGate } from 'redux-persist/lib/integration/react';
 import { persistStore, persistReducer } from 'redux-persist';
@@ -20,6 +20,11 @@ import { createTokenR, signupR, checkStripeR, selectCardR, signinR, authenticate
 selectCoinR, getInOutCoinR, generateTransactionR, fetchActivationR, fetchExStatsR, 
 fetchOrdersR, fetchNodeStatsR } from './store/reducers'
 
+import { createLogger } from 'redux-logger';
+import ReduxThunk from 'redux-thunk';
+env.reduxLogger
+
+console.log(process.env)
 
 const logger = createLogger();
 const rootReducer = combineReducers({
@@ -44,8 +49,10 @@ const persistConfig = {
  blacklist:['getInOutCoinR', 'fetchNodeStatsR', 'signupR'] // not be persisted
 };
 const pReducer = persistReducer(persistConfig, rootReducer);
-
-const store = createStore(pReducer, applyMiddleware(ReduxThunk, logger));
+var store
+process.env.REACT_APP_ENV === 'dev'? 
+( store = createStore(pReducer, applyMiddleware(ReduxThunk, logger)) )
+: ( store = createStore(pReducer, applyMiddleware(ReduxThunk)) )
 const persistor = persistStore(store);
 
 ReactDOM.render(
