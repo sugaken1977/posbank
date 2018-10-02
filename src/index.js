@@ -22,9 +22,6 @@ fetchOrdersR, fetchNodeStatsR } from './store/reducers'
 
 import { createLogger } from 'redux-logger';
 import ReduxThunk from 'redux-thunk';
-env.reduxLogger
-
-console.log(process.env)
 
 const logger = createLogger();
 const rootReducer = combineReducers({
