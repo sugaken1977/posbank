@@ -16,7 +16,7 @@ import 'tachyons';
 import { connect } from 'react-redux';
 import { createToken, signup, checkStripe, selectCard, signin, signout,
 selectCoin, selectNodeQuantity, getCoinList, getInputCoin, getOutputAmount, getWalletAddress, 
-fetchActivation, generateTransaction, fetchExStats, fetchOrders} from './store/actions';
+fetchActivation, generateTransaction, fetchExStats, fetchOrders, fetchNodeStats} from './store/actions';
 
 
 const mapStateToProps = (state) =>{
@@ -33,14 +33,16 @@ const mapStateToProps = (state) =>{
     selectedCoin: state.selectCoinR.selectedCoin,
     nodeQuantity: state.selectCoinR.nodeQuantity,
     outputAmount: state.getInOutCoinR.outputAmount,
+    inputCoin: state.getInOutCoinR.inputCoin, //input coin (from as used in changelly)
     transactionState: state.generateTransactionR,
     transactionId: state.generateTransactionR.transactionId,
     activated: state.fetchActivationR.activated,
     isFALoading: state.fetchActivationR.isFALoading,
     exStatus: state.fetchExStatsR.exStatus,
     isFExStatsLoading: state.fetchExStatsR.isFExStatsLoading,
-    coin: state.fetchOrdersR.coin,
-    isFOLoading: state.fetchOrdersR.isFOLoading
+    coin: state.fetchOrdersR.coin, // the coin (from db) that user selected
+    isFOLoading: state.fetchOrdersR.isFOLoading,
+    nodeData: state.fetchNodeStatsR.nodeData
   }
 }
 const mapDispatchToProps = (dispatch)=>{
@@ -59,7 +61,8 @@ const mapDispatchToProps = (dispatch)=>{
     onGenerateTransaction: ()=>dispatch(generateTransaction()),
     onFetchActivation: (pathname) => dispatch(fetchActivation(pathname)),
     onFetchExStats: (redirect)=>dispatch(fetchExStats(redirect)),
-    onFetchOrders: () =>dispatch(fetchOrders())
+    onFetchOrders: () =>dispatch(fetchOrders()),
+    onFetchNodeStats: () => dispatch(fetchNodeStats())
   }
 }
 class App extends Component {
@@ -67,9 +70,9 @@ class App extends Component {
   render() {
      const { onCreateToken,stripeComplete, onSignup, onSignin, isAuthenticated, onSignout, 
       redirectSignup, verifiedHash, zipcode, onCheckStripe, savedCards, haveStripe, selectedCard, onSelectCard, redirectSignin,  
-      selectedCoin, onSelectCoin, onselectNodeQuantity, onGetInputCoin, onGetOutputAmount, onGetWalletAddress, 
+      selectedCoin, onSelectCoin, onselectNodeQuantity, onGetInputCoin, onGetOutputAmount, inputCoin, onGetWalletAddress, 
       onGenerateTransaction, transactionState, transactionId, outputAmount, nodeQuantity, onFetchActivation,
-      activated, isFALoading, exStatus, isFExStatsLoading, onFetchExStats, coin, onFetchOrders, isFOLoading} = this.props
+      activated, isFALoading, exStatus, isFExStatsLoading, onFetchExStats, coin, onFetchOrders, isFOLoading, nodeData, onFetchNodeStats } = this.props
     return (
      <Router> 
       <div className="App">
@@ -78,7 +81,11 @@ class App extends Component {
           <Route path='/dashboard' exact
               render = {
                 (props) => {
-                  return <Dashboard { ...props } isAuthenticated = { isAuthenticated } />
+                  return <Dashboard { ...props } 
+                  isAuthenticated = { isAuthenticated } 
+                  nodeData = { nodeData }
+                  onFetchNodeStats = { onFetchNodeStats }
+                  />
                 }
               } />
 
@@ -94,7 +101,7 @@ class App extends Component {
                 selectedCard = { selectedCard }
                 onSelectCard = { onSelectCard }
                 stripeComplete = { stripeComplete }
-                onFetchOrders = { onFetchOrders }
+                onFetchOrders  = { onFetchOrders }
                 coin = { coin }
                 isFOLoading = { isFOLoading }
                 isAuthenticated = { isAuthenticated }
@@ -145,6 +152,10 @@ class App extends Component {
                   onGenerateTransaction = { onGenerateTransaction }
                   outputAmount = { outputAmount }
                   transactionId = { transactionId }
+                  onFetchOrders = { onFetchOrders }
+                  coin = { coin }
+                  isAuthenticated = { isAuthenticated }
+                  inputCoin = { inputCoin }
                   />
                 }
               } />  

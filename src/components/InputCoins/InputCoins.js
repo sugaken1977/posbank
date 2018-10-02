@@ -1,13 +1,9 @@
 import React from 'react'
 import Select from 'react-select'
 import { sleep } from '../../modules/modules'
-let options = [
-  { value: 'chocolate', label: 'Chocolate' },
-  { value: 'strawberry', label: 'Strawberry' },
-  { value: 'vanilla', label: 'Vanilla' }
-]
+import env from '../../config/env';
 
-const getCoinListInitialState ={
+const initialState ={
 	coinList: [],
 	isGetCoinLoading: true,
 	err: ''
@@ -39,19 +35,19 @@ const formatGroupLabel = data => (
 );
 
 
-class CoinList extends React.Component {
+class InputCoins extends React.Component {
 	constructor(props){
 		super(props)
-		this.state = getCoinListInitialState
+		this.state = initialState
 	}
 
 	getCoinList = () => {
-		return fetch('http://localhost:5001/coinlist')
+		return fetch(`${env.rootUrl}/coinlist`)
 		.then(response => response.json())
-		.then(data =>{
+		.then(async data =>{
 			if(data.id){
 				let coinList = []
-				data.result.map(coinName =>{
+				await data.result.map(coinName =>{
 					let coin = { 
 						value: coinName,
 						label: coinName
@@ -60,7 +56,8 @@ class CoinList extends React.Component {
 					return coinList
 				})
 				this.setState({coinList: coinList})
-				sleep(1000).then(()=>this.setState({isGetCoinLoading: false}))
+				
+				coinList[0]? this.setState({isGetCoinLoading: false}): null
 			}
 		})
 		.catch(err => console.log(err))
@@ -70,12 +67,13 @@ class CoinList extends React.Component {
 		this.getCoinList()
 	}
 	render(){
-		const { onGetInputCoin, selectInputCoin }= this.props
-		// const { isGetCoinLoading }= this.state
-		// console.log(this.state.coinList[0])
-		let zen = 'zen'
-		return selectInputCoin? <Select
-			defaultInputValue={zen}
+		const { onGetInputCoin, selectInputCoin, inputCoin }= this.props
+		const { isGetCoinLoading } = this.state
+
+		
+		return <Select
+			defaultValue={{ label: "btc", value: inputCoin }}
+			isLoading={isGetCoinLoading}
 			options={this.state.coinList} 
 			formatGroupLabel={formatGroupLabel}
 			onChange={(...args) => {
@@ -84,10 +82,9 @@ class CoinList extends React.Component {
             	}
           	}
          />
-         :<span>{}</span>
 
 	}
 }
 
 
-export default CoinList;
+export default InputCoins;

@@ -62,14 +62,14 @@ const Coins = props => {
 
 
 					return <li className='flex flex-row mv2 pa2 bg-light-gray shadow-1 list'  key={coin.coinId} >
-								<button className='f6 link dim ph3 pv2 mb2 dib white bg-light-purple '><NavLink
+								<NavLink
 									to='/signup'
 									className="no-underline white" 
 									onClick = { () => onSelectCoin(coin.name)}
 									title="Get 1 node">
-									Get
+									<button className='f6 link dim ph3 pv2 mb2 dib white bg-light-purple '>Get</button>
 									</NavLink>
-								</button>
+								
 								<span className='mv1 mh1'>{coin.name}</span>
 								<span className='mv1 mh1'>{`# Required: ${coin.required}`}</span>
 								<span className='mv1 mh1'>Extra # Required: 0.05</span>

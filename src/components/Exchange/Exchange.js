@@ -2,7 +2,8 @@ import React from 'react'
 import { Field, reduxForm } from 'redux-form'
 import validate from './validate'
 import asyncValidate from './asyncValidate'
-import CoinList from '../CoinList/CoinList'
+import InputCoins from '../InputCoins/InputCoins'
+import OutputCoins from '../OutputCoins/OutputCoins'
 import { Redirect } from 'react-router-dom'
 
 const renderField = ({
@@ -38,13 +39,13 @@ const renderField2 = ({
 
 const Exchange = props => {
   const { handleSubmit, submitting, onGetInputCoin, onGetOutputAmount, onGetWalletAddress, 
-  	onGenerateTransaction, transactionId, outputAmount} = props
+  	onGenerateTransaction, transactionId, outputAmount, onFetchOrders, coin, isAuthenticated, inputCoin} = props
   const selectInputCoin= true;
   let selectedCoin = 'Horizen'
   if(transactionId) {
   return <Redirect to={{pathname: '/send'}} />;
 	}
-  return (
+  return isAuthenticated? (
   	<div>
   		<div className='flex flex-row'>
 	  		<div className='flex flex-row w-50'>
@@ -58,20 +59,19 @@ const Exchange = props => {
 			        label={`Your ${selectedCoin} wallet`}
 			      />
 		  		<div className='mh1 w-30'>
-		  			<CoinList selectInputCoin = {selectInputCoin} 
+		  			<InputCoins selectInputCoin = {selectInputCoin} 
 		  			onGetInputCoin ={onGetInputCoin} 
+		  			inputCoin = { inputCoin }
 		  			/>
 		  		</div>
 	  		</div>
-	  		<div  className='flex flex-row w-50'>
-		 		<span className='w-70 bg-light-gray tc pv2'>{outputAmount}</span>
-		  		
-		  		<div className='mh1 w-30'>
-		  			<CoinList selectInputCoin = {!selectInputCoin} 
-		  			onGetInputCoin ={onGetInputCoin}
+		  			<OutputCoins selectInputCoin = {!selectInputCoin} 
+		  			onFetchOrders = { onFetchOrders }
+		  			onGetInputCoin ={onGetInputCoin} 
+		  			coin = { coin }
+		  			outputAmount = { outputAmount }
 		  			/>
-		  		</div>
-	  		</div>
+
   		</div>
 	    <form onSubmit={handleSubmit(onGenerateTransaction)}>
 	      <Field
@@ -89,7 +89,7 @@ const Exchange = props => {
 	      </div>
 	    </form>
     </div>
-  )
+  ): <h1>Please sign in or sign up</h1>
 }
 
 export default reduxForm({

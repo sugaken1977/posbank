@@ -31,11 +31,14 @@ import {
 		FETCH_EXSTATS_FAIL,
 		FETCH_ORDERS_LOADING,
 		FETCH_ORDERS_SUCCESS,
-		FETCH_ORDERS_FAIL
+		FETCH_ORDERS_FAIL,
+		FETCH_NODESTATS_LOADING,
+		FETCH_NODESTATS_SUCCESS,
+		FETCH_NODESTATS_FAIL
 		}
 from './constants';
 import {Decimal} from 'decimal.js';
-
+import env from '../config/env';
 import { sleep } from '../modules/modules'
 
 export const authenticate = () => ({
@@ -58,14 +61,14 @@ export const createToken = (event, stripe) => (dispatch, getState) =>{
     		userId: '1',
 	  		email: 'peter@gmail.com'
 	  	}
-	const { userId } = getState().signupR
-	const test = true
-	// if(getState().signupR.userId){
+	const { userId } = getState().fetchActivationR
+	// const test = true
+	if(userId){
 	// 	const { name, zipcode, state, city,
 	//       line1, line2, userId, country } = getState().signupR
-	if(test){	
+	// if(test){	
 			// user = Object.assign(getState().signupR, user)
-			let userId = 666
+			// let userId = 666
 			let promise = new Promise((resolve, reject) => {
     		let token = stripe.createToken({
     			name: 'noname'
@@ -74,7 +77,7 @@ export const createToken = (event, stripe) => (dispatch, getState) =>{
     	})
 			promise.then(promise => {
 		    	let {token} = promise 
-		    	return fetch(`http://localhost:5001/charge/${userId}`, {
+		    	return fetch(`${env.rootUrl}/charge/${userId}`, {
 			      method: "POST",
 			      headers: {'Content-Type': 'application/json'},
 			      body: JSON.stringify(token)
@@ -92,7 +95,7 @@ export const createToken = (event, stripe) => (dispatch, getState) =>{
     		promise.then(promise => {
 		    	let token = promise
 
-		    	return fetch(`http://localhost:5001/charge/${userId}`, {
+		    	return fetch(`${env.rootUrl}/charge/${userId}`, {
 			      method: "POST",
 			      headers: {'Content-Type': 'application/json'},
 			      body: JSON.stringify({card: token})
@@ -114,7 +117,7 @@ export const signup = (values) => (dispatch, getState) =>{
 	    const {email, password } = values
 
 	    
-	    fetch('http://localhost:5001/signup',{
+	    fetch(`${env.rootUrl}/signup`,{
 	          method: 'post',
 	          headers: {'Content-Type': 'application/json'},
 	          body: JSON.stringify({
@@ -142,7 +145,7 @@ export const signup = (values) => (dispatch, getState) =>{
 export const fetchActivation = (pathname) => (dispatch, getState) =>{
 	dispatch(({type: FETCH_ACTIVATION_LOADING, payload: true}))
 	
-		return fetch(`http://localhost:5001${pathname}`)
+		return fetch(`${env.rootUrl}${pathname}`)
 			.then(response => response.json())
 			.then(data => {
 					// console.log(activated)
@@ -168,7 +171,7 @@ export const signin = (values) => (dispatch) =>{
 	sleep(1000).then(() =>{
 		 const {email, password } = values
 
-	    fetch('http://localhost:5001/signin',{
+	    fetch(`${env.rootUrl}/signin`,{
 	        method: 'post',
 	        headers: {'Content-Type': 'application/json'},
 	        body: JSON.stringify({
@@ -193,7 +196,7 @@ export const signin = (values) => (dispatch) =>{
 export const checkStripe = (userId) => (dispatch, getState) => {
 	// let {userId} = getState().signupR
 	// let userId = 1
-	fetch(`http://localhost:5001/stripe/${userId}`)
+	fetch(`${env.rootUrl}/stripe/${userId}`)
 		.then(response => response.json())
 		.then(savedCards => {
 			// console.log(savedCards)
@@ -214,7 +217,7 @@ export const selectCard = (id) => (dispatch, getState) => {
 	})
 }
 
-//SELECT NODE AND COIN
+// select coin and node (1st step not get input coin in exchange)
 export const selectNodeQuantity = (num) => ({
 	type: SELECT_NODE_QUANTITY,
 	payload: num
@@ -233,13 +236,14 @@ export const selectCoin = (coin) => (dispatch)=>{
 // 	})
 // }
 
+// fetch orders
 export const fetchOrders = () => (dispatch, getState) =>{
 	let userId 
 	let promise = new Promise(resolve => resolve(userId = getState().fetchActivationR.userId))
 	
 	promise.then(userId => {
 		dispatch({type: FETCH_ORDERS_LOADING, payload: true })
-		return fetch(`http://localhost:5001/fetch-orders/${userId}`)
+		return fetch(`${env.rootUrl}/fetch-orders/${userId}`)
 			.then(response => response.json())
 			.then(data => {
 				// console.log(data)
@@ -250,20 +254,20 @@ export const fetchOrders = () => (dispatch, getState) =>{
 }
 
 // transaction
- 
+ // get input coin and fetch estimated output coin amount
 export const getInputCoin = (coinName, type) => (dispatch, getState) => {
 	type? dispatch({type: GET_INPUT_COIN, payload: coinName})
 	: dispatch(({type: GET_OUTPUT_COIN, payload: coinName}))
 
 	sleep(500).then(() => {
-		const {from, to, inputAmount} = getState().getInOutCoinR
+		const {inputCoin, outputCoin, inputAmount} = getState().getInOutCoinR
 		if(inputAmount){
-			fetch('http://localhost:5001/exchange-amount',{
+			fetch(`${env.rootUrl}/exchange-amount`,{
 		 	method: 'post',
 	        headers: {'Content-Type': 'application/json'},
 	        body: JSON.stringify({
-	          from: from,
-	          to: to,
+	          inputCoin: inputCoin,
+	          outputCoin: outputCoin,
 	          amount: inputAmount
 	        })	
 		})
@@ -281,7 +285,7 @@ export const getWalletAddress = (text) => ({
 
 export const getOutputAmount = (amount) => (dispatch, getState) => {
 
-	const { from, to } = getState().getInOutCoinR
+	const { inputCoin, outputCoin } = getState().getInOutCoinR
 	
 	
 	if(amount){
@@ -289,12 +293,12 @@ export const getOutputAmount = (amount) => (dispatch, getState) => {
 		let foo = new Decimal(amount)
 		const inputAmount = foo.toNumber()
 		dispatch({type: GET_INPUT_AMOUNT, payload: inputAmount })
-		fetch('http://localhost:5001/exchange-amount',{
+		fetch(`${env.rootUrl}/exchange-amount`,{
 		 	method: 'post',
 	        headers: {'Content-Type': 'application/json'},
 	        body: JSON.stringify({
-	          from: from,
-	          to: to,
+	          inputCoin: inputCoin,
+	          outputCoin: outputCoin,
 	          amount: inputAmount
 	        })	
 		})
@@ -306,14 +310,14 @@ export const getOutputAmount = (amount) => (dispatch, getState) => {
 
 export const generateTransaction = () => (dispatch, getState) => {
 	dispatch({type: GENERATE_TRANSACTION_LOADING, payload: true })
-	const { from, to, inputAmount, address} = getState().getInOutCoinR
+	const { inputCoin, outputCoin, inputAmount, address} = getState().getInOutCoinR
 	return sleep(1000).then(()=>{
-		fetch('http://localhost:5001/exchange',{
+		fetch(`${env.rootUrl}/exchange`,{
 		 	method: 'post',
 	        headers: {'Content-Type': 'application/json'},
 	        body: JSON.stringify({
-	          from: from,
-	          to: to,
+	          inputCoin: inputCoin,
+	          outputCoin: outputCoin,
 	          amount: inputAmount,
 	          address: address
 	        })	
@@ -329,7 +333,7 @@ export const fetchExStats = (redirect) => (dispatch, getState) =>{
 	redirect()
 	const { transactionId } = getState().generateTransactionR
 	sleep(1000).then(() =>{
-		fetch('http://localhost:5001/fetch-exchange-status', {
+		fetch(`${env.rootUrl}/fetch-exchange-status`, {
 		 	method: 'post',
 	        headers: {'Content-Type': 'application/json'},
 	        body: JSON.stringify({
@@ -338,10 +342,23 @@ export const fetchExStats = (redirect) => (dispatch, getState) =>{
 		})
 		.then(response => response.json())
 		.then(data => {
-			dispatch({type: FETCH_EXSTATS_SUCCESS, payload: data.result})
+			return dispatch({type: FETCH_EXSTATS_SUCCESS, payload: data.result})
 
 		})
 		.catch(err => dispatch({type: FETCH_EXSTATS_FAIL, payload: err}))
 	})
+}
+
+// fetch node data (payments, status)
+export const fetchNodeStats= () =>(dispatch) =>{
+	let nodeId= 71823, page = 1, rows = 1000;
+
+	let url =`https://securenodes2.na.zensystem.io/api/nodes/my/payments?key=ca9660f09b0ab40b1635171dc46de5bd17a7fb44&page=${page}&rows=${rows}&nid=${nodeId}`
 	
+	dispatch({type: FETCH_NODESTATS_LOADING, payload: true })
+	
+	fetch(url)
+		.then(response => response.json())
+		.then(data => dispatch({type: FETCH_NODESTATS_SUCCESS, payload: data}))
+		.catch(err => dispatch({type: FETCH_NODESTATS_FAIL, payload: err}))
 }

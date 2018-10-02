@@ -31,16 +31,21 @@ import {
 		FETCH_EXSTATS_FAIL,
 		FETCH_ORDERS_LOADING,
 		FETCH_ORDERS_SUCCESS,
-		FETCH_ORDERS_FAIL
+		FETCH_ORDERS_FAIL,
+		FETCH_NODESTATS_LOADING,
+		FETCH_NODESTATS_SUCCESS,
+		FETCH_NODESTATS_FAIL
 		}
 from './constants';
 
+// IS = Initial State
 
-const initialAuthState = {
+// authenticate
+const authenticateIS = {
   isAuthenticated: false,
 }
 
-export const authenticateR = (state = initialAuthState, action) => {
+export const authenticateR = (state = authenticateIS, action) => {
 	switch(action.type){
 		case AUTHENTICATED:
 			return{
@@ -57,14 +62,14 @@ export const authenticateR = (state = initialAuthState, action) => {
 	}
 }
 
-const tokenInitialState = {
+const tokenIS = {
 	stripeComplete: false,
 	isLoading: false,
 	error: ''
 }
 
 // token
-export const createTokenR = (state = tokenInitialState, action) =>{
+export const createTokenR = (state = tokenIS, action) =>{
 	switch(action.type){
 		case CREATE_TOKEN_LOADING:
 			return {
@@ -87,7 +92,7 @@ export const createTokenR = (state = tokenInitialState, action) =>{
 	}
 }
 // sign up
-const signupInitialState ={
+const signupIS ={
 	userId: '',
 	name: '',
 	gender: '',
@@ -102,7 +107,7 @@ const signupInitialState ={
 	error:''
 }
 
-export const signupR = (state = signupInitialState, action)=>{
+export const signupR = (state = signupIS, action)=>{
 	switch(action.type){
 		case SIGNUP_LOADING:
 			return{
@@ -135,14 +140,14 @@ export const signupR = (state = signupInitialState, action)=>{
 
 
 //fetch orders
-export const fetchOrdersInitialState = {
+export const fetchOrdersIS = {
 	userId: '',
 	isFOLoading: false, // FO= fetch order
 	coin: '', // user's selected coin which saved to db
 	error: ''
 }
 
-export const fetchOrdersR = (state = fetchOrdersInitialState, action) =>{
+export const fetchOrdersR = (state = fetchOrdersIS, action) =>{
 	switch(action.type){
 		case FETCH_ORDERS_LOADING: 
 			return {
@@ -166,14 +171,14 @@ export const fetchOrdersR = (state = fetchOrdersInitialState, action) =>{
 	}
 }
 //fetch activation
-const fetchActivationInitialState ={
+const fetchActivationIS ={
 	userId: '',
 	activated: null,
 	isFALoading: false,
 	error: ''
 }
 
-export const fetchActivationR = (state = fetchActivationInitialState, action)=>{
+export const fetchActivationR = (state = fetchActivationIS, action)=>{
 	switch(action.type){
 		case FETCH_ACTIVATION_LOADING:
 			return {
@@ -203,7 +208,7 @@ export const fetchActivationR = (state = fetchActivationInitialState, action)=>{
 	}
 }
 // sign in
-const signinInitialState = {
+const signinIS = {
 	userId: '',
 	name: '',
 	gender: '',
@@ -217,7 +222,7 @@ const signinInitialState = {
 	error:''
 }
 
-export const signinR = (state =signinInitialState, action) =>{
+export const signinR = (state =signinIS, action) =>{
 	switch(action.type){
 		case SIGNIN_SUCCESS:
 			return{
@@ -249,7 +254,7 @@ export const signinR = (state =signinInitialState, action) =>{
 			return state
 	}
 }
-const haveStripeInitialState ={
+const haveStripeIS ={
 	savedCards: [
     	{id: '111', type: 'visa'},
     	{id: '121', type: 'master'}
@@ -257,7 +262,7 @@ const haveStripeInitialState ={
 	haveStripe: false
 }
 
-export const checkStripeR = (state = haveStripeInitialState, action) => {
+export const checkStripeR = (state = haveStripeIS, action) => {
 	switch(action.type){
 		case HAVE_STRIPE:
 			return{
@@ -270,10 +275,10 @@ export const checkStripeR = (state = haveStripeInitialState, action) => {
 		}
 }
 // get user card for stripe
-const selectCardInitialState = {
+const selectCardIS = {
 	selectedCard: ''
 }
-export const selectCardR = (state = selectCardInitialState, action) => {
+export const selectCardR = (state = selectCardIS, action) => {
 	switch(action.type){
 		case SELECT_CARD:
 			return {
@@ -285,12 +290,12 @@ export const selectCardR = (state = selectCardInitialState, action) => {
 	}
 }
 // get coin that users select for nodes
-const selectCoinInitialState ={
+const selectCoinIS ={
 	selectedCoin: '',
 	nodeQuantity: 1
 }
 
-export const selectCoinR = (state = selectCoinInitialState, action) => {
+export const selectCoinR = (state = selectCoinIS, action) => {
 	switch(action.type){
 		case SELECT_COIN:
 			return{
@@ -306,25 +311,25 @@ export const selectCoinR = (state = selectCoinInitialState, action) => {
 			return state
 	}
 }
-// get user's input coin
-const getInOutCoinInitialState ={
-	from: 'btc',
-	to: 'zen',
+// get user's input coin, estimated amount
+const getInOutCoinIS ={
+	inputCoin: 'btc',
+	outputCoin: 'zen',
 	inputAmount: 0,
 	outputAmount: 0,
 	address: ''
 }
-export const getInOutCoinR = (state = getInOutCoinInitialState, action) =>{
+export const getInOutCoinR = (state = getInOutCoinIS, action) =>{
 	switch(action.type){
 		case GET_INPUT_COIN:
 			return {
 				...state,
-				from: action.payload
+				inputCoin: action.payload
 			}
 		case GET_OUTPUT_COIN:
 			return {
 				...state,
-				to: action.payload
+				outputCoin: action.payload
 			}
 		case GET_INPUT_AMOUNT:
 			return {
@@ -346,18 +351,18 @@ export const getInOutCoinR = (state = getInOutCoinInitialState, action) =>{
 	}
 }
 // generate transaction
-const generateTransactionInitialState ={
+const generateTransactionIS ={
 	transactionId:'',
 	payInAddress: '',
 	payOutAddress: '',
-	from: '',
-    to: '',
+	inputCoin: '',
+    outputCoin: '',
     amountToPayIn: '',
     isGenerateTrLoading: false,
     err: ''
 }
 
-export const generateTransactionR =(state=generateTransactionInitialState, action)=>{
+export const generateTransactionR =(state=generateTransactionIS, action)=>{
 	switch(action.type){
 		case GENERATE_TRANSACTION_LOADING:
 			return {
@@ -370,8 +375,8 @@ export const generateTransactionR =(state=generateTransactionInitialState, actio
 				transactionId: action.payload.id,
 				payInAddress: action.payload.payinAddress,
 				payOutAddress: action.payload.payoutAddress,
-				from: action.payload.currencyFrom,
-			    to: action.payload.currencyTo,
+				inputCoin: action.payload.currencyFrom,
+			    outputCoin: action.payload.currencyTo,
 			    amountToPayIn: action.payload.amountExpectedFrom
 			}
 		case GENERATE_TRANSACTION_FAILED:
@@ -385,14 +390,14 @@ export const generateTransactionR =(state=generateTransactionInitialState, actio
 }
 
 // fetch exchange status (transaction status)
-const fetchExStatsInitialState = {
+const fetchExStatsIS = {
 	exStatus: '',
 	isFExStatsLoading: false,
 	error: ''
 }
 
 
-export const fetchExStatsR = (state = fetchExStatsInitialState, action)=>{
+export const fetchExStatsR = (state = fetchExStatsIS, action)=>{
 	switch(action.type){
 		case FETCH_EXSTATS_LOADING:
 			return {
@@ -407,6 +412,37 @@ export const fetchExStatsR = (state = fetchExStatsInitialState, action)=>{
 			}
 		case FETCH_EXSTATS_FAIL:
 			return {
+				...state,
+				error: action.payload
+			}
+		default:
+			return state
+	}
+}
+
+// fetch node data (payments, status)
+
+const fetchNodeStatsIS = {
+	nodeData: {},
+	isFNStatsLoading: false,
+	error: ''
+}
+
+export const fetchNodeStatsR = (state = fetchNodeStatsIS, action) =>{
+	switch(action.type){
+		case FETCH_NODESTATS_LOADING:
+			return{
+				...state,
+				isFNStatsLoading: true
+			}
+		case FETCH_NODESTATS_SUCCESS:
+			return{
+				...state,
+				nodeData: action.payload,
+				isFNStatsLoading: false
+			}
+		case FETCH_NODESTATS_FAIL:
+			return{
 				...state,
 				error: action.payload
 			}
