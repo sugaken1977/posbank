@@ -2,7 +2,3 @@ AuthType Basic
 AuthName "Restricted access"
 AuthUserFile "/app/.htpasswd"
 Require valid-user
-
-RewriteEngine On
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteRule ^ index.js [QSA,L]
