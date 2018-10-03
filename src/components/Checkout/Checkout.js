@@ -7,22 +7,26 @@ import { Redirect } from 'react-router-dom'
 class Checkout extends Component {
 	
 	componentDidMount(){
-		this.props.onFetchOrders()
+		return !this.props.isAuthenticated? this.props.onFetchOrders()
+		: null
 	}
 	render(){
 		const { onCreateToken, zipcode, onCheckStripe, savedCards, haveStripe, selectedCard, onSelectCard, stripeComplete,
-		 onFetchOrders, coin, isFOLoading, isAuthenticated} = this.props
-		 console.log(stripeComplete)
+		 onFetchOrders, coin, selectedCoin, isFOLoading, isAuthenticated} = this.props
+
+		let displayCoin
+		isAuthenticated? displayCoin = selectedCoin: displayCoin = coin
+
 		if(stripeComplete){
 			return <Redirect to={{pathname: '/exchange'}} />;
 		}
 		return isAuthenticated? isFOLoading? <h1>Loading...</h1>
-		: coin? (
+		: displayCoin? (
 			<div>
 				<div>
 					<div className='mv2'>
 						<span>Masternode's name: </span>
-						<span>{coin}</span>
+						<span>{displayCoin}</span>
 					</div>
 					<div className='mv2'>
 						<span>Node quantity: </span>

@@ -4,7 +4,7 @@ import Checkout from './components/Checkout/Checkout';
 import Signin from './components/Signin/Signin';
 import Signup from './components/Signup/Signup';
 import Navigation from './components/Navigation/Navigation';
-import Coins from './components/Coins/Coins';
+import SelectCoins from './components/SelectCoins/SelectCoins';
 import Dashboard from './components/Dashboard/Dashboard';
 import Exchange from './components/Exchange/Exchange';
 import Send from './components/Send/Send';
@@ -12,6 +12,7 @@ import AfterSignup from './components/AfterSignup/AfterSignup';
 import ExchangeStatus from './components/ExchangeStatus/ExchangeStatus';
 import Direction from './components/Direction/Direction';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import {Decimal} from 'decimal.js';
 import 'tachyons';
 
 import { connect } from 'react-redux';
@@ -27,6 +28,7 @@ const mapStateToProps = (state) =>{
     zipcode: state.signupR.zipcode,
     verifiedHash: state.signupR.VerifiedHash,
     redirectSignin: state.signinR.redirectSignin,
+    email: state.signinR.email,
     savedCards: state.checkStripeR.savedCards,
     haveStripe: state.checkStripeR.haveStripe,
     selectedCard: state.selectCardR.selectedCard,
@@ -69,16 +71,16 @@ const mapDispatchToProps = (dispatch)=>{
 class App extends Component {
 
   render() {
-     const { onCreateToken,stripeComplete, onSignup, onSignin, isAuthenticated, onSignout, 
-      redirectSignup, verifiedHash, zipcode, onCheckStripe, savedCards, haveStripe, selectedCard, onSelectCard, redirectSignin,  
-      selectedCoin, onSelectCoin, onselectNodeQuantity, onGetInputCoin, onGetOutputAmount, inputCoin, onGetWalletAddress, 
-      onGenerateTransaction, transactionState, transactionId, outputAmount, nodeQuantity, onFetchActivation,
-      activated, isFALoading, exStatus, isFExStatsLoading, onFetchExStats, coin, onFetchOrders, isFOLoading, nodeData, onFetchNodeStats } = this.props
+     const { onCreateToken,stripeComplete, onSignup, onSignin, isAuthenticated, onSignout, redirectSignup, verifiedHash, 
+      zipcode, onCheckStripe, savedCards, haveStripe, selectedCard, onSelectCard, redirectSignin, selectedCoin, onSelectCoin, 
+      onselectNodeQuantity, onGetInputCoin, onGetOutputAmount, inputCoin, onGetWalletAddress, onGenerateTransaction, transactionState,
+      transactionId, outputAmount, nodeQuantity, onFetchActivation, activated, isFALoading, exStatus, isFExStatsLoading, onFetchExStats, 
+      coin, onFetchOrders, isFOLoading, nodeData, onFetchNodeStats, email } = this.props
 
     return (
      <Router> 
       <div className="App">
-       <Navigation onSignout = { onSignout } isAuthenticated = { isAuthenticated } />
+       <Navigation onSignout = { onSignout } isAuthenticated = { isAuthenticated } email = { email }/>
         <Switch>
           <Route path='/dashboard' exact
               render = {
@@ -104,6 +106,7 @@ class App extends Component {
                 onSelectCard = { onSelectCard }
                 stripeComplete = { stripeComplete }
                 onFetchOrders  = { onFetchOrders }
+                selectedCoin = { selectedCoin }
                 coin = { coin }
                 isFOLoading = { isFOLoading }
                 isAuthenticated = { isAuthenticated }
@@ -120,14 +123,15 @@ class App extends Component {
                 />
               }
             } />  
-             <Route path='/choosecoin' exact
+             <Route path='/select-coin' exact
             render={
               (props) => {
-                return <Coins { ...props } 
+                return <SelectCoins { ...props } 
                 selectedCoin = { selectedCoin } 
                 onSelectCoin = { onSelectCoin }
                 nodeQuantity = { nodeQuantity }
                 onselectNodeQuantity = { onselectNodeQuantity }
+                isAuthenticated = { isAuthenticated } 
                 />
               }
             } />

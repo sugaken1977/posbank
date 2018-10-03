@@ -211,15 +211,16 @@ export const fetchActivationR = (state = fetchActivationIS, action)=>{
 // sign in
 const signinIS = {
 	userId: '',
-	name: '',
-	gender: '',
-	zipcode: '',
-	state: '',
-	city: '',
-	line1: '',
-	line2: '',
-	signinLoading: false,
+	// name: '',
+	// gender: '',
+	// zipcode: '',
+	// state: '',
+	// city: '',
+	// line1: '',
+	// line2: '',
+	isSigninLoading: false,
 	redirectSignin: false,
+	email:'',
 	error:''
 }
 
@@ -229,17 +230,19 @@ export const signinR = (state =signinIS, action) =>{
 			return{
 				...state,
 				userId: action.payload.UserId,
-				name: action.payload.Name,
-				state: action.payload.AddressState,
-				city: action.payload.AddressCity,
-				line1: action.payload.AddressLine1,
-				line2: action.payload.AddressLine2,
-				redirectSignin: true
+				// name: action.payload.Name,
+				// state: action.payload.AddressState,
+				// city: action.payload.AddressCity,
+				// line1: action.payload.AddressLine1,
+				// line2: action.payload.AddressLine2,
+				email: action.payload.Email,
+				redirectSignin: true,
+				isSigninLoading: false
 			}
 		case SIGNIN_LOADING:
 			return{
 				...state,
-				signinLoading: true
+				isSigninLoading: true
 			}
 		case SIGNIN_FAILED:
 			return{

@@ -7,7 +7,6 @@ const renderField = ({ input, label, type, meta: { touched, error } }) => (
     <label>{label}</label>
     <div>
       <input {...input} placeholder={label} type={type} />
-      {touched && error && <span>{error}</span>}
     </div>
   </div>
 )
@@ -24,7 +23,7 @@ const Signin = props => {
         name="email"
         type="text"
         component={renderField}
-        label="Username"
+        label="Email"
       />
       <Field
         name="password"
@@ -46,5 +45,5 @@ const Signin = props => {
 }
 
 export default reduxForm({
-  form: 'signin' // a unique identifier for this form
+  form: 'signin' // a unique identifier for this form,
 })(Signin)

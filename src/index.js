@@ -46,6 +46,7 @@ const persistConfig = {
  blacklist:['getInOutCoinR', 'fetchNodeStatsR', 'signupR', 'createTokenR', 'formReducer'] // not be persisted
 };
 const pReducer = persistReducer(persistConfig, rootReducer);
+//Production config to hide redux logger
 var store
 process.env.REACT_APP_ENV === 'dev'? 
 ( store = createStore(pReducer, applyMiddleware(ReduxThunk, logger)) )

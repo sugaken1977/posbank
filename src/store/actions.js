@@ -57,20 +57,29 @@ export const signout = () => (
 export const createToken = (event, stripe) => (dispatch, getState) =>{
     event.preventDefault()
     dispatch({type: CREATE_TOKEN_LOADING, payload: true})
-    	var user= {
+    const isAuthenticated = getState().authenticateR
+
+    let user, userId, email, test = true
+
+    test? (
+    	user= {
     		userId: '1',
 	  		email: 'peter@gmail.com'
-	  	}
-	const { userId } = getState().fetchActivationR
-	console.log(userId)
-	// const test = true
-	if(userId){
+	  	},
+	  	{ userId, email } = user
 
+    ) : (
+    	isAuthenticated? { userId, email } = getState().signinR
+ 		: { userId } = getState().fetchActivationR
+    )
+    	
+
+	if(userId){
+		console.log(userId)
 	// 	const { name, zipcode, state, city,
 	//       line1, line2, userId, country } = getState().signupR
-	// if(test){	
-			// user = Object.assign(getState().signupR, user)
-			// let userId = 666
+		if(!isAuthenticated){
+			// console.log('signup')
 			let promise = new Promise((resolve, reject) => {
     		let token = stripe.createToken({
     			name: 'noname'
@@ -87,12 +96,11 @@ export const createToken = (event, stripe) => (dispatch, getState) =>{
 		    	})
 		    .then(response =>  dispatch({type: CREATE_TOKEN_SUCCESS, payload: true}))
 		    .catch(err => dispatch({type: CREATE_TOKEN_FAILED, payload: err}))
-
-	} else if(getState().signinR.userId){
-			
+		 } else{
+		 	// console.log('signin')
 			let promise = new Promise((resolve, reject) => {
     		let selectedCard = getState().selectCardR.selectedCard
-    		selectedCard? resolve(selectedCard): reject('something wrong with stripe createToken()')
+    		selectedCard? resolve(selectedCard): reject('cannot get selectedCard')
 
     		promise.then(promise => {
 		    	let token = promise
@@ -105,8 +113,9 @@ export const createToken = (event, stripe) => (dispatch, getState) =>{
 		    	})
 		    .then(response => dispatch({type: CREATE_TOKEN_SUCCESS, payload: response.ok}))
 		    .catch(err => dispatch({type: CREATE_TOKEN_FAILED, payload: err}))
-    })
-	}
+   			 })
+			}
+	} 
 }
 // sign up
 export const signup = (values) => (dispatch, getState) =>{

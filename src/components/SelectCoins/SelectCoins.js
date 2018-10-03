@@ -4,9 +4,9 @@ import {Decimal} from 'decimal.js'
 
 Decimal.config({ precision: 2, rounding: 4 });
 
-const Coins = props => {
+const SelectCoins = props => {
 	
-  const { onNext, onSelectCoin, onselectNodeQuantity, selectedCoin, nodeQuantity } = props
+  const { onNext, onSelectCoin, onselectNodeQuantity, selectedCoin, nodeQuantity, isAuthenticated } = props
 
   var coins =[
   	{	
@@ -62,13 +62,22 @@ const Coins = props => {
 
 
 					return <li className='flex flex-row mv2 pa2 bg-light-gray shadow-1 list'  key={coin.coinId} >
-								<NavLink
-									to='/signup'
-									className="no-underline white" 
-									onClick = { () => onSelectCoin(coin.name)}
-									title="Get 1 node">
-									<button className='f6 link dim ph3 pv2 mb2 dib white bg-light-purple '>Get</button>
-									</NavLink>
+								{isAuthenticated && <NavLink
+                                    to='/checkout'
+                                    className="no-underline white" 
+                                    onClick = { () => onSelectCoin(coin.name)}
+                                    title="Get 1 node">
+                                    <button className='f6 link dim ph3 pv2 mb2 dib white bg-light-purple '>Get</button>
+                                  </NavLink>
+                  }
+                  {!isAuthenticated && <NavLink
+                                    to='/signup'
+                                    className="no-underline white" 
+                                    onClick = { () => onSelectCoin(coin.name)}
+                                    title="Get 1 node">
+                                    <button className='f6 link dim ph3 pv2 mb2 dib white bg-light-purple '>Get</button>
+                                  </NavLink>
+                  }
 								
 								<span className='mv1 mh1'>{coin.name}</span>
 								<span className='mv1 mh1'>{`# Required: ${coin.required}`}</span>
@@ -89,4 +98,4 @@ const Coins = props => {
  )
 }
 
-export default Coins;
+export default SelectCoins;
