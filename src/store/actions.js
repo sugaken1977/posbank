@@ -40,7 +40,7 @@ from './constants';
 import {Decimal} from 'decimal.js';
 import env from '../config/env';
 import { sleep } from '../modules/modules'
-console.log(env.rootUrl)
+// console.log(env.rootUrl)
 export const authenticate = () => ({
     type: AUTHENTICATED,
     payload: true
@@ -62,8 +62,10 @@ export const createToken = (event, stripe) => (dispatch, getState) =>{
 	  		email: 'peter@gmail.com'
 	  	}
 	const { userId } = getState().fetchActivationR
+	console.log(userId)
 	// const test = true
 	if(userId){
+
 	// 	const { name, zipcode, state, city,
 	//       line1, line2, userId, country } = getState().signupR
 	// if(test){	
@@ -83,7 +85,7 @@ export const createToken = (event, stripe) => (dispatch, getState) =>{
 			      body: JSON.stringify(token)
 			  })
 		    	})
-		    .then(response =>  dispatch({type: CREATE_TOKEN_SUCCESS, payload: response.ok}))
+		    .then(response =>  dispatch({type: CREATE_TOKEN_SUCCESS, payload: true}))
 		    .catch(err => dispatch({type: CREATE_TOKEN_FAILED, payload: err}))
 
 	} else if(getState().signinR.userId){
@@ -307,10 +309,11 @@ export const getOutputAmount = (amount) => (dispatch, getState) => {
 		})
 	} 
 }
-
+// generate transaction
 export const generateTransaction = () => (dispatch, getState) => {
 	dispatch({type: GENERATE_TRANSACTION_LOADING, payload: true })
 	const { inputCoin, outputCoin, inputAmount, address} = getState().getInOutCoinR
+	// console.log(address)
 	return sleep(1000).then(()=>{
 		fetch(`${env.rootUrl}/exchange`,{
 		 	method: 'post',

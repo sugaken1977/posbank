@@ -8,6 +8,7 @@ import Coins from './components/Coins/Coins';
 import Dashboard from './components/Dashboard/Dashboard';
 import Exchange from './components/Exchange/Exchange';
 import Send from './components/Send/Send';
+import AfterSignup from './components/AfterSignup/AfterSignup';
 import ExchangeStatus from './components/ExchangeStatus/ExchangeStatus';
 import Direction from './components/Direction/Direction';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
@@ -73,6 +74,7 @@ class App extends Component {
       selectedCoin, onSelectCoin, onselectNodeQuantity, onGetInputCoin, onGetOutputAmount, inputCoin, onGetWalletAddress, 
       onGenerateTransaction, transactionState, transactionId, outputAmount, nodeQuantity, onFetchActivation,
       activated, isFALoading, exStatus, isFExStatsLoading, onFetchExStats, coin, onFetchOrders, isFOLoading, nodeData, onFetchNodeStats } = this.props
+
     return (
      <Router> 
       <div className="App">
@@ -139,6 +141,12 @@ class App extends Component {
                   onSelectCoin = { onSelectCoin }
                   
                   />
+                }
+              } />
+              <Route path='/signup-thankyou' exact
+              render={
+                (props) =>{
+                  return <AfterSignup />
                 }
               } />
 

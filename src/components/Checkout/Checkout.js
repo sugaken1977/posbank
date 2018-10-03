@@ -12,7 +12,7 @@ class Checkout extends Component {
 	render(){
 		const { onCreateToken, zipcode, onCheckStripe, savedCards, haveStripe, selectedCard, onSelectCard, stripeComplete,
 		 onFetchOrders, coin, isFOLoading, isAuthenticated} = this.props
-		 // console.log(isAuthenticated)
+		 console.log(stripeComplete)
 		if(stripeComplete){
 			return <Redirect to={{pathname: '/exchange'}} />;
 		}

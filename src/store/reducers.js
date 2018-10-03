@@ -62,6 +62,7 @@ export const authenticateR = (state = authenticateIS, action) => {
 	}
 }
 
+// stripe token
 const tokenIS = {
 	stripeComplete: false,
 	isLoading: false,
@@ -80,7 +81,7 @@ export const createTokenR = (state = tokenIS, action) =>{
 			return {
 				...state,
 				stripeComplete: action.payload,
-				isloading: false
+				isLoading: false
 			}
 		case CREATE_TOKEN_FAILED:
 			return{

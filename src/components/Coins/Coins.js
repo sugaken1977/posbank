@@ -11,7 +11,7 @@ const Coins = props => {
   var coins =[
   	{	
   		coinId: 1,
-  		name: 'Horizen',
+  		name: 'zen',
   		required: 42,
   		minedPerMonth: 216000,
   		poolReward: 0.1,
@@ -21,13 +21,13 @@ const Coins = props => {
   	},
   	{	
   		coinId: 2,
-  		name: 'Dash',
+  		name: 'dash',
   		required: 1000,
   		ROI: 0.0687
   	},
   	{	
   		coinId: 3,
-  		name: 'PIVX',
+  		name: 'pivx',
   		required: 10000,
   		ROI: 0.1004
   	},

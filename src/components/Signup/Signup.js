@@ -25,7 +25,7 @@ const Signup = props => {
   const { handleSubmit, pristine, reset, submitting, onSignup, redirectSignup, onBack, onNext } = props
   
 if(redirectSignup) {
-  return <Redirect to={{pathname: '/checkout'}} />;
+  return <Redirect to={{pathname: '/signup-thankyou'}} />;
 }
 return (
     <form onSubmit={handleSubmit(onSignup)}>  

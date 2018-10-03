@@ -43,7 +43,7 @@ const rootReducer = combineReducers({
 const persistConfig = {
  key: 'root',
  storage: storage,
- blacklist:['getInOutCoinR', 'fetchNodeStatsR', 'signupR'] // not be persisted
+ blacklist:['getInOutCoinR', 'fetchNodeStatsR', 'signupR', 'createTokenR', 'formReducer'] // not be persisted
 };
 const pReducer = persistReducer(persistConfig, rootReducer);
 var store
