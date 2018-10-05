@@ -5,6 +5,7 @@ import { sleep } from '../../modules/modules'
 import _ from "lodash";
 import {Decimal} from 'decimal.js';
 import ReactTooltip from 'react-tooltip'
+import Loading from '../Loading/Loading'
 
 // Decimal.set({ precision: 9, rounding: 4 })
 
@@ -95,7 +96,7 @@ class Node extends React.Component{
          					className="-highlight"
 				/>
 			</div>
-		): <h1>Loading...</h1>
+		): <Loading />
 	}
 }
 

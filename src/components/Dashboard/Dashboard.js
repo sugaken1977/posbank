@@ -2,6 +2,7 @@ import React from 'react'
 import { Route, Redirect } from 'react-router-dom'
 import { sleep } from '../../modules/modules'
 import NodeList from '../NodeList/NodeList'
+import Loading from '../Loading/Loading'
 import MasterNodeList from '../MasterNodeList/MasterNodeList'
 
 const initialState = {
@@ -19,7 +20,7 @@ class Dashboard extends React.Component {
 	render(){
 		const { isAuthenticated, nodeData, onFetchNodeStats, allNodeData, price, onFetchAllNodeStats } = this.props
 		
-		return this.state.isLoading? <h1>Loading...</h1>
+		return this.state.isLoading? <Loading />
 		: isAuthenticated? (
 			<div>
 			{

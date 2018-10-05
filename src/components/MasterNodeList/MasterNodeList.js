@@ -1,6 +1,7 @@
 import React from 'react'
 import ReactTable from "react-table";
 import NodeList from '../NodeList/NodeList'
+import Loading from '../Loading/Loading'
 import "react-table/react-table.css";
 import _ from "lodash";
 import './MasterNodeList.css'
@@ -107,10 +108,15 @@ class MasterNodeList extends React.Component {
 						  }}
 						/>
 					</div>
-					) :  <NodeList nodeData = { nodeData } 
-					onFetchNodeStats = { onFetchNodeStats }
-						/> 
-				) :<h1>Loading...</h1>
+					) : (
+						<div>
+
+							<NodeList nodeData = { nodeData } 
+						onFetchNodeStats = { onFetchNodeStats }
+							/>
+						</div>
+					)  
+				) : <Loading />
 	}
 }
 export default MasterNodeList;
