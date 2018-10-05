@@ -364,8 +364,8 @@ export const fetchExStats = (redirect) => (dispatch, getState) =>{
 // fetch node data (payments, status)
 export const fetchNodeStats= () =>(dispatch) =>{
 	let nodeId= 71823, page = 1, rows = 1000;
-
-	let url =`https://securenodes2.na.zensystem.io/api/nodes/my/payments?key=ca9660f09b0ab40b1635171dc46de5bd17a7fb44&page=${page}&rows=${rows}&nid=${nodeId}`
+	let key = '324ee3b89932de1a4b782391036c6804ce7e71ac'
+	let url =`https://securenodes2.na.zensystem.io/api/nodes/my/payments?key=${key}&page=${page}&rows=${rows}&nid=${nodeId}`
 	
 	dispatch({type: FETCH_NODESTATS_LOADING, payload: true })
 	

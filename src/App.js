@@ -3,7 +3,8 @@ import './App.css';
 import Checkout from './components/Checkout/Checkout';
 import Signin from './components/Signin/Signin';
 import Signup from './components/Signup/Signup';
-import Navigation from './components/Navigation/Navigation';
+// import Navigation from './components/Navigation/Navigation';
+import Navigation2 from './components/Navigation/Navigation2';
 import SelectCoins from './components/SelectCoins/SelectCoins';
 import Dashboard from './components/Dashboard/Dashboard';
 import Exchange from './components/Exchange/Exchange';
@@ -80,7 +81,7 @@ class App extends Component {
     return (
      <Router> 
       <div className="App">
-       <Navigation onSignout = { onSignout } isAuthenticated = { isAuthenticated } email = { email }/>
+      <Navigation2 onSignout = { onSignout } isAuthenticated = { isAuthenticated } email = { email }/>
         <Switch>
           <Route path='/dashboard' exact
               render = {

@@ -9,8 +9,10 @@ import ReactTooltip from 'react-tooltip'
 // Decimal.set({ precision: 9, rounding: 4 })
 
 const initialState = {
-	isLoading: true
+	isLoading: true,
+	isClick: false
 }
+
 
 class Node extends React.Component{
 	constructor(props){
@@ -89,7 +91,7 @@ class Node extends React.Component{
 
 				<ReactTable data = { data } columns = { columns } 
 							defaultPageSize={10}
-         					className="-striped -highlight"
+         					className="-highlight"
 				/>
 			</div>
 		): <h1>Loading...</h1>

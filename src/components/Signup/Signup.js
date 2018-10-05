@@ -3,22 +3,33 @@ import { Field, reduxForm } from 'redux-form'
 import validate from './validate'
 import asyncValidate from './asyncValidate'
 import { Redirect, NavLink } from 'react-router-dom'
-const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+import { TextField } from 'redux-form-material-ui'
+// import TextField from '@material-ui/core/TextField';
+
+
 const renderField = ({
   input,
   label,
   type,
-  autoComplete,
-  meta: { asyncValidating, touched, valid, error }
+  component,
+  meta: { asyncValidating, touched, valid, error },
+  ...custom
 }) => (
-  <div>
+  <TextField 
+    {...input}
+    {...custom}
+    type={type}
+    helperText ={touched && error || touched && valid}
+  />
+  /*<div>
     <label>{label}</label>
-    <div className={asyncValidating ? 'async-validating' : ''}>
-      <input {...input} type={type} placeholder={label} autoComplete={label}/>
+    <div className={asyncValidating ? 'async-validating text' : ''}>
+      <input {...input} type={type} placeholder={label} autoComplete={label} component={TextField}/>
       {touched && error && <span>{error}</span>}
       {touched && valid && <span>✓</span>}
     </div>
-  </div>
+  </div>*/
+
 )
 
 const Signup = props => {
@@ -28,7 +39,9 @@ if(redirectSignup) {
   return <Redirect to={{pathname: '/signup-thankyou'}} />;
 }
 return (
-    <form onSubmit={handleSubmit(onSignup)}>  
+   <div className='tc'>
+    <form onSubmit={handleSubmit(onSignup)} className='flex flex-column w-30 center'>  
+
         <Field
           name="email"
           type="text"
@@ -63,6 +76,7 @@ return (
         
       </div>
     </form>
+  </div>
   )
 }
 

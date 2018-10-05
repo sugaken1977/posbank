@@ -2,6 +2,8 @@ import React, { Component } from 'react'
 import StripeCheckout from '../StripeCheckout/StripeCheckout'
 // import MoneyButton from '@moneybutton/react-money-button'
 import { Redirect } from 'react-router-dom'
+import { NavLink } from 'react-router-dom';
+
 
 
 class Checkout extends Component {

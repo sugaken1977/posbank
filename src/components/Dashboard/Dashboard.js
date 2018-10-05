@@ -2,6 +2,7 @@ import React from 'react'
 import { Route, Redirect } from 'react-router-dom'
 import { sleep } from '../../modules/modules'
 import NodeList from '../NodeList/NodeList'
+import MasterNodeList from '../MasterNodeList/MasterNodeList'
 
 const initialState = {
 	isLoading: true
@@ -21,9 +22,12 @@ class Dashboard extends React.Component {
 		return this.state.isLoading? <h1>Loading...</h1>
 		: isAuthenticated? (
 			<div>
-				<NodeList nodeData = { nodeData } 
-					onFetchNodeStats = { onFetchNodeStats }
-				/>
+			{
+				// <NodeList nodeData = { nodeData } 
+				// 	onFetchNodeStats = { onFetchNodeStats }
+				// /> 
+			}
+				<MasterNodeList />
 			</div>
 		)
 		: <Redirect to='/'/>
