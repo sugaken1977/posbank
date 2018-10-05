@@ -17,7 +17,7 @@ class Dashboard extends React.Component {
 		sleep(1000).then(()=> this.setState({isLoading: false})) //wait for redux's props
 	}
 	render(){
-		const { isAuthenticated, nodeData, onFetchNodeStats } = this.props
+		const { isAuthenticated, nodeData, onFetchNodeStats, allNodeData, price, onFetchAllNodeStats } = this.props
 		
 		return this.state.isLoading? <h1>Loading...</h1>
 		: isAuthenticated? (
@@ -27,7 +27,12 @@ class Dashboard extends React.Component {
 				// 	onFetchNodeStats = { onFetchNodeStats }
 				// /> 
 			}
-				<MasterNodeList />
+				<MasterNodeList onFetchAllNodeStats = { onFetchAllNodeStats }
+								onFetchNodeStats = {  onFetchNodeStats }
+								allNodeData = { allNodeData }
+								nodeData = { nodeData } 
+								price = { price }
+				/>
 			</div>
 		)
 		: <Redirect to='/'/>

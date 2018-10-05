@@ -19,7 +19,7 @@ import 'tachyons';
 import { connect } from 'react-redux';
 import { createToken, signup, checkStripe, selectCard, signin, signout,
 selectCoin, selectNodeQuantity, getCoinList, getInputCoin, getOutputAmount, getWalletAddress, 
-fetchActivation, generateTransaction, fetchExStats, fetchOrders, fetchNodeStats} from './store/actions';
+fetchActivation, generateTransaction, fetchExStats, fetchOrders, fetchNodeStats, fetchAllNodeStats} from './store/actions';
 
 
 const mapStateToProps = (state) =>{
@@ -46,7 +46,10 @@ const mapStateToProps = (state) =>{
     isFExStatsLoading: state.fetchExStatsR.isFExStatsLoading,
     coin: state.fetchOrdersR.coin, // the coin (from db) that user selected
     isFOLoading: state.fetchOrdersR.isFOLoading,
-    nodeData: state.fetchNodeStatsR.nodeData
+    nodeData: state.fetchNodeStatsR.nodeData,
+    allNodeData: state.fetchNodeStatsR.allNodeData,
+    price: state.fetchNodeStatsR.price
+
   }
 }
 const mapDispatchToProps = (dispatch)=>{
@@ -66,7 +69,8 @@ const mapDispatchToProps = (dispatch)=>{
     onFetchActivation: (pathname) => dispatch(fetchActivation(pathname)),
     onFetchExStats: (redirect)=>dispatch(fetchExStats(redirect)),
     onFetchOrders: () =>dispatch(fetchOrders()),
-    onFetchNodeStats: () => dispatch(fetchNodeStats())
+    onFetchNodeStats: (coin) => dispatch(fetchNodeStats(coin)),
+    onFetchAllNodeStats: (coin) => dispatch(fetchAllNodeStats(coin)) 
   }
 }
 class App extends Component {
@@ -76,8 +80,8 @@ class App extends Component {
       zipcode, onCheckStripe, savedCards, haveStripe, selectedCard, onSelectCard, redirectSignin, selectedCoin, onSelectCoin, 
       onselectNodeQuantity, onGetInputCoin, onGetOutputAmount, inputCoin, onGetWalletAddress, onGenerateTransaction, transactionState,
       transactionId, outputAmount, nodeQuantity, onFetchActivation, activated, isFALoading, exStatus, isFExStatsLoading, onFetchExStats, 
-      coin, onFetchOrders, isFOLoading, nodeData, onFetchNodeStats, email } = this.props
-
+      coin, onFetchOrders, isFOLoading, nodeData, onFetchNodeStats,onFetchAllNodeStats, email, allNodeData, price } = this.props
+      console.log(allNodeData)
     return (
      <Router> 
       <div className="App">
@@ -90,6 +94,9 @@ class App extends Component {
                   isAuthenticated = { isAuthenticated } 
                   nodeData = { nodeData }
                   onFetchNodeStats = { onFetchNodeStats }
+                  onFetchAllNodeStats = { onFetchAllNodeStats }
+                  allNodeData = { allNodeData }
+                  price = { price }
                   />
                 }
               } />

@@ -34,11 +34,13 @@ import {
 		FETCH_ORDERS_FAIL,
 		FETCH_NODESTATS_LOADING,
 		FETCH_NODESTATS_SUCCESS,
+		FETCH_ALL_NODESTATS_SUCCESS,
 		FETCH_NODESTATS_FAIL
 		}
 from './constants';
 import {Decimal} from 'decimal.js';
 import env from '../config/env';
+import _ from "lodash";
 import { sleep } from '../modules/modules'
 // console.log(env.rootUrl)
 export const authenticate = () => ({
@@ -362,10 +364,24 @@ export const fetchExStats = (redirect) => (dispatch, getState) =>{
 }
 
 // fetch node data (payments, status)
-export const fetchNodeStats= () =>(dispatch) =>{
+export const fetchNodeStats= () => async (dispatch, getState) =>{
 	let nodeId= 71823, page = 1, rows = 1000;
-	let key = '324ee3b89932de1a4b782391036c6804ce7e71ac'
-	let url =`https://securenodes2.na.zensystem.io/api/nodes/my/payments?key=${key}&page=${page}&rows=${rows}&nid=${nodeId}`
+	let key = '1d1a3df982fadb7141a15048c948cedc7d540dc5'
+	let baseUrl = 'https://securenodes2.na.zensystem.io/api/nodes/my/'
+	let type ={
+		payments: 'payments?key=',
+		earnings: 'earnings?key='
+	}
+	let subUrl, url, coin = 'zen';
+	let userId = getState().signinR.userId
+	await coin === 'zen'? (
+		subUrl = type.payments,
+		url =`${baseUrl}${subUrl}${key}&page=${page}&rows=${rows}&nid=${nodeId}`
+		): (
+			subUrl = type.earnings,
+			url =`${baseUrl}${subUrl}${key}`
+		)
+
 	
 	dispatch({type: FETCH_NODESTATS_LOADING, payload: true })
 	
@@ -373,4 +389,54 @@ export const fetchNodeStats= () =>(dispatch) =>{
 		.then(response => response.json())
 		.then(data => dispatch({type: FETCH_NODESTATS_SUCCESS, payload: data}))
 		.catch(err => dispatch({type: FETCH_NODESTATS_FAIL, payload: err}))
+}
+
+
+// fetch all nodes
+export const fetchAllNodeStats= (coin) => (dispatch, getState) => {
+
+	let key = '1d1a3df982fadb7141a15048c948cedc7d540dc5'
+	let baseUrl = 'https://securenodes2.na.zensystem.io/api/nodes/my/'
+	let type ={
+		payments: 'payments?key=',
+		earnings: 'earnings?key='
+	}
+	let subUrl, url
+	let userId = getState().signinR.userId
+	if(coin === 'zen'){
+		subUrl = type.earnings
+		url =`${baseUrl}${subUrl}${key}`
+	} 
+
+	dispatch({type: FETCH_NODESTATS_LOADING, payload: true })
+	
+	fetch(url)
+		.then(response => response.json())
+		.then(data => {
+			if(data.records){
+					let allNodeBalance = data.summary.totalzen
+					let price = data.summary.zenusd
+				
+					return fetch(`${env.rootUrl}/fetch-node-stats/${userId}`, {
+				      method: "POST",
+				      headers: {'Content-Type': 'application/json'},
+				      body: JSON.stringify({
+				      	allNodeBalance: allNodeBalance,
+				      	coin: coin
+				      })
+				  })
+			    .then(response => response.json())
+			    .then(async dbData => {
+			    	await _.map(dbData, item => item.price = price)
+			    	
+			    	dispatch({type: FETCH_ALL_NODESTATS_SUCCESS, payload: dbData})
+					  // apiType === 'payments'? dispatch({type: FETCH_NODESTATS_SUCCESS, payload: dbData})
+					// : dispatch({type: FETCH_ALL_NODESTATS_SUCCESS, payload: })
+			    })
+			    .catch(err => dispatch({type: FETCH_NODESTATS_FAIL, payload: err}))	
+				}  else {
+					dispatch({type: FETCH_NODESTATS_FAIL, payload: data.error})
+				}
+			})// end data
+			.catch(err => dispatch({type: FETCH_NODESTATS_FAIL, payload: err}))
 }

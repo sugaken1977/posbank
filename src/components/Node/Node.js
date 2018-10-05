@@ -20,11 +20,12 @@ class Node extends React.Component{
 		this.state = initialState
 	}
 	async componentDidMount(){
-		this.props.onFetchNodeStats()
+		let coin = 'zen'
+		this.props.onFetchNodeStats(coin)
 	}
 	render(){
 		const { nodeData } = this.props
-		
+		console.log(nodeData)
 		const data = nodeData.rows
 		
 		const columns = [

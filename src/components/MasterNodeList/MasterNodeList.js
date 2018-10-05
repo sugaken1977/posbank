@@ -1,5 +1,6 @@
 import React from 'react'
 import ReactTable from "react-table";
+import NodeList from '../NodeList/NodeList'
 import "react-table/react-table.css";
 import _ from "lodash";
 import './MasterNodeList.css'
@@ -25,9 +26,21 @@ const db =[
 	}
 
 ]
+const initialState ={
+	isClick:false
+}
 class MasterNodeList extends React.Component {
-
+	constructor(props){
+		super(props)
+		this.state= initialState
+	}
+	componentDidMount(){
+		let coin = 'zen'
+		this.props.onFetchAllNodeStats(coin)
+	}
 	render(){
+			const { allNodeData, price, onFetchNodeStats, nodeData } = this.props
+			console.log(allNodeData)
 			const columns = [
 			{
 			    Header: 'Index',
@@ -49,11 +62,11 @@ class MasterNodeList extends React.Component {
 			},
 			{
 				Header: 'Coin name',
-				accessor: 'coinName'
+				accessor: 'coin'
 			},
 			{
 				Header: 'Balance',
-				accessor: 'balance'
+				accessor: 'allNodeBalance'
 			},
 			{
 				Header: 'Price',
@@ -74,19 +87,30 @@ class MasterNodeList extends React.Component {
 				accessor: 'valueChange'
 			}
 		]
-		return(
-			<div>
-
-				<div className='mt4 center w-80'>
-					<ReactTable data={db} 
-					columns={columns}
-					defaultPageSize={5}
-					className="-highlight"
-					/>
-				</div>
-			</div>
-			)
+		return allNodeData? (
+				
+				!this.state.isClick? (
+					<div className='mt4 center w-80'>
+						<ReactTable data={allNodeData} 
+						columns={columns}
+						defaultPageSize={5}
+						className="-highlight"
+						getTdProps={(state, rowInfo, column, instance) => {
+						    return {
+						      onClick: (e, handleOriginal) => {
+						         this.setState({isClick: true})
+						        if (handleOriginal) {
+						          handleOriginal();
+						        }
+						      }
+						    };
+						  }}
+						/>
+					</div>
+					) :  <NodeList nodeData = { nodeData } 
+					onFetchNodeStats = { onFetchNodeStats }
+						/> 
+				) :<h1>Loading...</h1>
 	}
 }
-
 export default MasterNodeList;

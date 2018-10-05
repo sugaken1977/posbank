@@ -34,6 +34,7 @@ import {
 		FETCH_ORDERS_FAIL,
 		FETCH_NODESTATS_LOADING,
 		FETCH_NODESTATS_SUCCESS,
+		FETCH_ALL_NODESTATS_SUCCESS,
 		FETCH_NODESTATS_FAIL
 		}
 from './constants';
@@ -429,6 +430,7 @@ export const fetchExStatsR = (state = fetchExStatsIS, action)=>{
 const fetchNodeStatsIS = {
 	nodeData: {},
 	isFNStatsLoading: false,
+	allNodeData: [],
 	error: ''
 }
 
@@ -443,6 +445,12 @@ export const fetchNodeStatsR = (state = fetchNodeStatsIS, action) =>{
 			return{
 				...state,
 				nodeData: action.payload,
+				isFNStatsLoading: false
+			}
+		case FETCH_ALL_NODESTATS_SUCCESS:
+			return{
+				...state,
+				allNodeData: action.payload,
 				isFNStatsLoading: false
 			}
 		case FETCH_NODESTATS_FAIL:
