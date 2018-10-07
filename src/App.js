@@ -30,6 +30,7 @@ const mapStateToProps = (state) =>{
     verifiedHash: state.signupR.VerifiedHash,
     redirectSignin: state.signinR.redirectSignin,
     email: state.signinR.email,
+    signinError: state.signinR.signinError,
     savedCards: state.checkStripeR.savedCards,
     haveStripe: state.checkStripeR.haveStripe,
     selectedCard: state.selectCardR.selectedCard,
@@ -47,8 +48,9 @@ const mapStateToProps = (state) =>{
     coin: state.fetchOrdersR.coin, // the coin (from db) that user selected
     isFOLoading: state.fetchOrdersR.isFOLoading,
     nodeData: state.fetchNodeStatsR.nodeData,
-    allNodeData: state.fetchNodeStatsR.allNodeData,
-    price: state.fetchNodeStatsR.price
+    allNodeData: state.fetchAllNodeStatsR.allNodeData,
+    price: state.fetchNodeStatsR.price,
+    // isFANStatsLoading: state.fetchNodeStatsR.isFNStatsLoading
 
   }
 }
@@ -80,8 +82,9 @@ class App extends Component {
       zipcode, onCheckStripe, savedCards, haveStripe, selectedCard, onSelectCard, redirectSignin, selectedCoin, onSelectCoin, 
       onselectNodeQuantity, onGetInputCoin, onGetOutputAmount, inputCoin, onGetWalletAddress, onGenerateTransaction, transactionState,
       transactionId, outputAmount, nodeQuantity, onFetchActivation, activated, isFALoading, exStatus, isFExStatsLoading, onFetchExStats, 
-      coin, onFetchOrders, isFOLoading, nodeData, onFetchNodeStats,onFetchAllNodeStats, email, allNodeData, price } = this.props
-      console.log(allNodeData)
+      coin, onFetchOrders, isFOLoading, nodeData, onFetchNodeStats,onFetchAllNodeStats, email, allNodeData, price, isFNStatsLoading, 
+      signinError } = this.props
+
     return (
      <Router> 
       <div className="App">
@@ -97,6 +100,7 @@ class App extends Component {
                   onFetchAllNodeStats = { onFetchAllNodeStats }
                   allNodeData = { allNodeData }
                   price = { price }
+                  isFNStatsLoading ={ isFNStatsLoading }
                   />
                 }
               } />
@@ -128,6 +132,7 @@ class App extends Component {
                 return <Signin { ...props } 
                 onSignin = { onSignin } 
                 redirectSignin = { redirectSignin }
+                signinError = { signinError }
                 />
               }
             } />  

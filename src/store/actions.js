@@ -8,6 +8,7 @@ import {
 		SIGNIN_SUCCESS,
 		SIGNIN_LOADING,
 		SIGNIN_FAILED,
+		LOAD_USER,
 		HAVE_STRIPE,
 		SELECT_CARD,
 		AUTHENTICATED,
@@ -34,8 +35,10 @@ import {
 		FETCH_ORDERS_FAIL,
 		FETCH_NODESTATS_LOADING,
 		FETCH_NODESTATS_SUCCESS,
+		FETCH_NODESTATS_FAIL,
+		FETCH_ALL_NODESTATS_LOADING,
 		FETCH_ALL_NODESTATS_SUCCESS,
-		FETCH_NODESTATS_FAIL
+		FETCH_ALL_NODESTATS_FAIL
 		}
 from './constants';
 import {Decimal} from 'decimal.js';
@@ -55,6 +58,12 @@ export const signout = () => (
 	  }
   )
 
+ export const loadUser = (data) => (
+	  {
+	  	type: LOAD_USER,
+	  	payload: data
+	  }
+  )
 
 export const createToken = (event, stripe) => (dispatch, getState) =>{
     event.preventDefault()
@@ -71,7 +80,7 @@ export const createToken = (event, stripe) => (dispatch, getState) =>{
 	  	{ userId, email } = user
 
     ) : (
-    	isAuthenticated? { userId, email } = getState().signinR
+    	isAuthenticated? { userId, email } = getState().loadUserR
  		: { userId } = getState().fetchActivationR
     )
     	
@@ -194,15 +203,19 @@ export const signin = (values) => (dispatch) =>{
 	      })//end fetch
 	          .then(response => response.json())
 	          .then(data => {
-	          	console.log(data)
+	          	// console.log(data)
 	          	if(data.UserId) {
+	          		dispatch(loadUser(data))
 	          		dispatch({type: SIGNIN_SUCCESS, payload: data})
 	          		dispatch(authenticate())
 	          	} else{
-	          		dispatch({type: SIGNIN_FAILED, payload: data})
+	          		dispatch({type: SIGNIN_FAILED, payload: 'Wrong email or password'})
 	          	}	          	
 	          })//end user
-	          .catch(err => dispatch({type: SIGNIN_FAILED, payload: err}))
+	          .catch(err => {
+	          	console.log(err)
+	          	dispatch({type: SIGNIN_FAILED, payload: 'Wrong email or password'})
+	          })
 		})
 }
 
@@ -365,30 +378,51 @@ export const fetchExStats = (redirect) => (dispatch, getState) =>{
 
 // fetch node data (payments, status)
 export const fetchNodeStats= () => async (dispatch, getState) =>{
-	let nodeId= 71823, page = 1, rows = 1000;
-	let key = '1d1a3df982fadb7141a15048c948cedc7d540dc5'
-	let baseUrl = 'https://securenodes2.na.zensystem.io/api/nodes/my/'
-	let type ={
-		payments: 'payments?key=',
-		earnings: 'earnings?key='
-	}
-	let subUrl, url, coin = 'zen';
-	let userId = getState().signinR.userId
-	await coin === 'zen'? (
-		subUrl = type.payments,
-		url =`${baseUrl}${subUrl}${key}&page=${page}&rows=${rows}&nid=${nodeId}`
-		): (
-			subUrl = type.earnings,
-			url =`${baseUrl}${subUrl}${key}`
-		)
+	dispatch({type: FETCH_NODESTATS_LOADING, payload: true })
 
 	
-	dispatch({type: FETCH_NODESTATS_LOADING, payload: true })
+	let subUrl1, subUrl2, url1, url2, coin = 'zen';
+	let userId = getState().loadUserR.userId
+
+	if(coin === 'zen'){ 
+		let page = 1, rows = 1000;
+		let key = '1d1a3df982fadb7141a15048c948cedc7d540dc5'
+		let baseUrl = 'https://securenodes2.na.zensystem.io/api/nodes/my/'
+		let type ={
+			payments: 'payments?key=',
+			earnings: 'earnings?key='
+		}
+		subUrl1 = type.earnings,
+		subUrl2 = type.payments,
+		url1 =`${baseUrl}${subUrl1}${key}`,
+		
+		fetch(url1)
+			.then(response => response.json())
+			.then(data => {
+				// console.log(data)
+				var nodeData =[]
+				for(let node of data.rows){
+					let nodeId = node.nid
+					url2 =`${baseUrl}${subUrl2}${key}&page=${page}&rows=${rows}&nid=${nodeId}`
+					fetch(url2)
+						.then(response => response.json())
+						.then( oneNodeData => {
+							// console.log(oneNodeData)
+							for (let payment of oneNodeData.rows){
+								payment.nodeId = nodeId
+								nodeData.push(payment)
+							}			
+						}) // end then oneNodeData
+				}//end for of data.rows
+				
+				dispatch({type: FETCH_NODESTATS_SUCCESS, payload: nodeData})
+			})//end of then data
+			.catch(err => dispatch({type: FETCH_NODESTATS_FAIL, payload: err}))
+		
+		} else {
+			return null // for future
+		}
 	
-	fetch(url)
-		.then(response => response.json())
-		.then(data => dispatch({type: FETCH_NODESTATS_SUCCESS, payload: data}))
-		.catch(err => dispatch({type: FETCH_NODESTATS_FAIL, payload: err}))
 }
 
 
@@ -402,13 +436,13 @@ export const fetchAllNodeStats= (coin) => (dispatch, getState) => {
 		earnings: 'earnings?key='
 	}
 	let subUrl, url
-	let userId = getState().signinR.userId
+	let userId = getState().loadUserR.userId
 	if(coin === 'zen'){
 		subUrl = type.earnings
 		url =`${baseUrl}${subUrl}${key}`
 	} 
 
-	dispatch({type: FETCH_NODESTATS_LOADING, payload: true })
+	dispatch({type: FETCH_ALL_NODESTATS_LOADING, payload: true })
 	
 	fetch(url)
 		.then(response => response.json())
@@ -433,10 +467,10 @@ export const fetchAllNodeStats= (coin) => (dispatch, getState) => {
 					  // apiType === 'payments'? dispatch({type: FETCH_NODESTATS_SUCCESS, payload: dbData})
 					// : dispatch({type: FETCH_ALL_NODESTATS_SUCCESS, payload: })
 			    })
-			    .catch(err => dispatch({type: FETCH_NODESTATS_FAIL, payload: err}))	
+			    .catch(err => dispatch({type: FETCH_ALL_NODESTATS_FAIL, payload: err}))	
 				}  else {
-					dispatch({type: FETCH_NODESTATS_FAIL, payload: data.error})
+					dispatch({type: FETCH_ALL_NODESTATS_FAIL, payload: data.error})
 				}
 			})// end data
-			.catch(err => dispatch({type: FETCH_NODESTATS_FAIL, payload: err}))
+			.catch(err => dispatch({type: FETCH_ALL_NODESTATS_FAIL, payload: err}))
 }

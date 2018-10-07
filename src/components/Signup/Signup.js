@@ -3,8 +3,8 @@ import { Field, reduxForm } from 'redux-form'
 import validate from './validate'
 import asyncValidate from './asyncValidate'
 import { Redirect, NavLink } from 'react-router-dom'
-import { TextField } from 'redux-form-material-ui'
-// import TextField from '@material-ui/core/TextField';
+
+import TextField from '@material-ui/core/TextField';
 
 
 const renderField = ({

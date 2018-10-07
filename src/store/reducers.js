@@ -8,6 +8,7 @@ import {
 		SIGNIN_SUCCESS,
 		SIGNIN_LOADING,
 		SIGNIN_FAILED,
+		LOAD_USER,
 		HAVE_STRIPE,
 		SELECT_CARD,
 		AUTHENTICATED,
@@ -34,13 +35,37 @@ import {
 		FETCH_ORDERS_FAIL,
 		FETCH_NODESTATS_LOADING,
 		FETCH_NODESTATS_SUCCESS,
+		FETCH_NODESTATS_FAIL,
+		FETCH_ALL_NODESTATS_LOADING,
 		FETCH_ALL_NODESTATS_SUCCESS,
-		FETCH_NODESTATS_FAIL
+		FETCH_ALL_NODESTATS_FAIL
 		}
 from './constants';
 
 // IS = Initial State
 
+//
+const initialLoadUserIS = {
+	userId: '',
+    // name: '',
+    email: '',
+    walletAddress: ''
+}
+
+export const loadUserR = (state = initialLoadUserIS, action) =>{
+	switch(action.type){
+		case LOAD_USER:
+		 return{
+		 	...state,
+		 	userId: action.payload.UserId,
+		 	// name: action.payload.Name,
+		 	email: action.payload.Email,
+		 	walletAddress: action.payload.WalletAddress
+		 }
+		 default:
+		 	return state;
+	}
+}
 // authenticate
 const authenticateIS = {
   isAuthenticated: false,
@@ -222,7 +247,7 @@ const signinIS = {
 	isSigninLoading: false,
 	redirectSignin: false,
 	email:'',
-	error:''
+	signinError:''
 }
 
 export const signinR = (state =signinIS, action) =>{
@@ -248,7 +273,7 @@ export const signinR = (state =signinIS, action) =>{
 		case SIGNIN_FAILED:
 			return{
 				...state,
-				error: action.payload
+				signinError: action.payload
 			}
 		case SIGN_OUT:
 			return {
@@ -428,9 +453,8 @@ export const fetchExStatsR = (state = fetchExStatsIS, action)=>{
 // fetch node data (payments, status)
 
 const fetchNodeStatsIS = {
-	nodeData: {},
+	nodeData: [],
 	isFNStatsLoading: false,
-	allNodeData: [],
 	error: ''
 }
 
@@ -447,16 +471,42 @@ export const fetchNodeStatsR = (state = fetchNodeStatsIS, action) =>{
 				nodeData: action.payload,
 				isFNStatsLoading: false
 			}
+		case FETCH_NODESTATS_FAIL:
+			return{
+				...state,
+				error: action.payload,
+				isFNStatsLoading: false
+			}
+		default:
+			return state
+	}
+}
+// fetch all node data (payments, status)
+
+const fetchAllNodeStatsIS = {
+	allNodeData: [],
+	isFANStatsLoading: false,
+	error: ''
+}
+
+export const fetchAllNodeStatsR = (state = fetchAllNodeStatsIS, action) =>{
+	switch(action.type){
+		case FETCH_ALL_NODESTATS_LOADING:
+			return{
+				...state,
+				isFANStatsLoading: true
+			}
 		case FETCH_ALL_NODESTATS_SUCCESS:
 			return{
 				...state,
 				allNodeData: action.payload,
-				isFNStatsLoading: false
+				isFANStatsLoading: false
 			}
-		case FETCH_NODESTATS_FAIL:
+		case FETCH_ALL_NODESTATS_FAIL:
 			return{
 				...state,
-				error: action.payload
+				error: action.payload,
+				isFANStatsLoading: false
 			}
 		default:
 			return state

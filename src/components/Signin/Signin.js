@@ -1,54 +1,76 @@
 import React from 'react'
-import { Field, reduxForm } from 'redux-form'
+import { reduxForm } from 'redux-form'
 import { Redirect } from 'react-router-dom'
-import { TextField } from 'redux-form-material-ui'
+import PasswordField from '../PasswordField/PasswordField'
+import EmailField from '../EmailField/EmailField'
+
 import Button from '@material-ui/core/Button';
+import Paper from '@material-ui/core/Paper';
+import classNames from 'classnames';
+import { styles } from '../../modules/modules'
+import { withStyles } from '@material-ui/core/styles';
+import Typography from '@material-ui/core/Typography';
 
-const renderField = ({ input, label, type, custom, className, meta: { touched, error } }) => (
-  <TextField 
-    {...input}
-    {...custom}
-    type={type}
-    helperText ={touched && error}
-    className ={className}
-  />
 
-)
-const Submit = props => <button type="submit" disabled={props.submitting}>Signin</button>
-const Signin = props => {
-  const { error, handleSubmit, pristine, reset, submitting, onSignin, redirectSignin} = props
-  
-  if(redirectSignin) {
-    return <Redirect to={{pathname: '/dashboard'}} />;
+
+const initialState ={
+  showPassword: false
+}
+const Submit = props => {
+  // console.log(props)
+  return <button {...props} type="submit" disabled={this.submitting}>Signin</button>
+}
+
+class Signin extends React.Component  {
+  constructor(){
+    super()
+    this.state = initialState
   }
+ 
+  handleClickShowPassword = () => {
+     this.setState({ showPassword: !this.state.showPassword });
+    };
+  handleSubmitting = () =>{
+    this.setState({submitting: true})
+  }
+  
+ 
+  render(){
+    const { error, handleSubmit, pristine, reset, onSignin, redirectSignin,
+    signinError, classes} = this.props
+    const { showPassword, submitting } = this.state
+    if(redirectSignin) {
+      return <Redirect to={{pathname: '/dashboard'}} />;
+    }
+
   return (
-    <div className='tc w-100 dt'>
-      <form  className='flex flex-column w-40 center v-mid tc dtc' onSubmit={handleSubmit(onSignin)}>
-        <Field
-          name="email"
-          component={TextField}
-          hintText="Email"
-          floatingLabelText="Email"
-        />
-        <Field
-          name="password"
-          type="password"
-          component={ renderField }
-          label="Password"
-          className='mv1'
-        />
-        {error && <strong>{error}</strong>}
-        <div>
+    <div className='tc w-100 dt vh-75'>
+      <div className='v-mid tc dtc'>
+      <Paper className={classNames(classes.paper, classes.center, classes.pa4)} elevation={3}>
+        <form  className='flex flex-column center' onSubmit={handleSubmit(onSignin)}>
+          <Typography variant="headline" gutterBottom>
+            Sigin to your account
+        </Typography>
+         {signinError && <span className='red w-100 center pt2 pb2'>{signinError}</span>}
+          <EmailField />
+          <PasswordField handleClickShowPassword ={ this.handleClickShowPassword } 
+          showPassword ={ showPassword }/> 
+          <div className='mv2'>
+            
+          <Button variant="contained"
+                  classNames={classNames(classes.button)}
+                  component={Submit}>
+          </Button> 
           
-          <Button variant="contained" type="submit" disabled={props.submitting}>
-            Signin
-          </Button>
-        </div>
-      </form>
+          </div>
+        </form>
+    </Paper>
+      </div>
     </div>
   )
 }
-
+}
+Signin = withStyles(styles)(Signin)
 export default reduxForm({
   form: 'signin' // a unique identifier for this form,
 })(Signin)

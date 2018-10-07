@@ -18,7 +18,7 @@ import storage from 'redux-persist/lib/storage';
 import { reducer as formReducer } from 'redux-form'
 import { createTokenR, signupR, checkStripeR, selectCardR, signinR, authenticateR,
 selectCoinR, getInOutCoinR, generateTransactionR, fetchActivationR, fetchExStatsR, 
-fetchOrdersR, fetchNodeStatsR } from './store/reducers'
+fetchOrdersR, fetchNodeStatsR, fetchAllNodeStatsR, loadUserR } from './store/reducers'
 
 import { createLogger } from 'redux-logger';
 import ReduxThunk from 'redux-thunk';
@@ -38,12 +38,14 @@ const rootReducer = combineReducers({
 	fetchExStatsR,
 	fetchOrdersR,
 	fetchNodeStatsR,
+	fetchAllNodeStatsR,
+	loadUserR,
 	form: formReducer
 })
 const persistConfig = {
  key: 'root',
  storage: storage,
- blacklist:['getInOutCoinR', 'fetchNodeStatsR', 'signupR', 'createTokenR', 'formReducer'] // not be persisted
+ blacklist:['getInOutCoinR', 'signupR', 'createTokenR', 'formReducer', 'signinR'] // not be persisted
 };
 const pReducer = persistReducer(persistConfig, rootReducer);
 //Production config to hide redux logger

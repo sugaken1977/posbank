@@ -28,8 +28,7 @@ const styles = {
   },
 };
 const  initialState = {
-    auth: true,
-    anchorEl: null,
+    anchorEl: null
   };
 
 class Navigation2 extends React.Component {
@@ -38,21 +37,20 @@ class Navigation2 extends React.Component {
     this.state = initialState
   }
 
-  handleChange = event => {
-    this.setState({ auth: event.target.checked });
-  };
-
   handleMenu = event => {
     this.setState({ anchorEl: event.currentTarget });
   };
 
   handleClose = () => {
+    // console.log('close')
     this.setState({ anchorEl: null });
   };
-
+  // componentDidUpdate(){
+  //   console.log(this.state)
+  // }
   render() {
     const { isAuthenticated, onSignout, email, classes } = this.props;
-    const { auth, anchorEl } = this.state;
+    const { anchorEl } = this.state;
     const open = Boolean(anchorEl);
 
     return (
@@ -101,10 +99,10 @@ class Navigation2 extends React.Component {
             )}
             {!isAuthenticated && (
               <div>
-                <Button component={NavLink} to="/signin" color="inherit">
+                <Button component={NavLink} to="/signin" color="inherit" onClick={this.handleClose}>
                   Sign in
                 </Button>
-                <Button component={NavLink} to="/select-coin" color="inherit" >
+                <Button component={NavLink} to="/select-coin" color="inherit" onClick={this.handleClose} >
                   Sign up
                 </Button>
               </div>

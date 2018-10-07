@@ -2,16 +2,18 @@ import React from 'react'
 import ReactTable from "react-table";
 import "react-table/react-table.css";
 import { sleep } from '../../modules/modules'
+
 import _ from "lodash";
 import {Decimal} from 'decimal.js';
 import ReactTooltip from 'react-tooltip'
 import Loading from '../Loading/Loading'
 
+
 // Decimal.set({ precision: 9, rounding: 4 })
 
 const initialState = {
 	isLoading: true,
-	isClick: false
+	nodeData: []
 }
 
 
@@ -20,15 +22,31 @@ class Node extends React.Component{
 		super(props)
 		this.state = initialState
 	}
-	async componentDidMount(){
-		let coin = 'zen'
-		this.props.onFetchNodeStats(coin)
+	componentDidMount(){
+		sleep(1000).then(()=> this.setState({isLoading: false}))
 	}
-	render(){
-		const { nodeData } = this.props
-		console.log(nodeData)
-		const data = nodeData.rows
+
 		
+	// 	this.setState({
+	// 		isFNStatsLoading: this.props.isFNStatsLoading, 
+	// 		nodeData: this.props.nodeData})
+	// }
+
+	// static getDerivedStateFromProps(nextProps, prevState){
+	// 	// console.log(nextProps)
+	// 	// console.log(prevState)
+	// 	if(nextProps.isFNStatsLoading !== prevState.isFNStatsLoading){
+	// 		return {
+	// 			isFNStatsLoading: nextProps.isFNStatsLoading,
+	// 			nodeData: nextProps.nodeData 	
+	// 		}
+	// 	}
+	// 	 return null;
+	// }
+
+	render(){
+		const { nodeData, isFNStatsLoading } = this.props
+	
 		const columns = [
 			{
 			    Header: 'Payment Index',
@@ -47,6 +65,11 @@ class Node extends React.Component{
 						<span>{ row.data.length } {' '} Payments</span>
 					</div>
 				)
+			},
+			{
+				Header: 'Node id',
+				accessor: 'nodeId',
+				className: 'tc',
 			},
 			{
 				Header: 'Zen',
@@ -83,18 +106,19 @@ class Node extends React.Component{
 				}
 			},
 		]
-
-		return data? (
+		
+		return !this.state.isLoading? (
 			<div>
 				<ReactTooltip id='total' type='dark' 
 					getContent = { dataTip => <span>{`excluding review amount: ${dataTip} Zen`}</span>}
 				/>
 				  	
 
-				<ReactTable data = { data } columns = { columns } 
+				<ReactTable data = { nodeData } columns = { columns } 
 							defaultPageSize={10}
          					className="-highlight"
 				/>
+
 			</div>
 		): <Loading />
 	}
