@@ -94,7 +94,9 @@ class MasterNodeList extends React.Component {
 			},
 			{
 				Header: 'Balance',
-				accessor: 'allNodeBalance'
+				id: 'allNodeBalance',
+				accessor: 'allNodeBalance',
+				Cell: row => <span>{_.round(row.original.allNodeBalance, 9)}</span>,
 			},
 			{
 				Header: 'Price',

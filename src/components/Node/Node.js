@@ -43,7 +43,13 @@ class Node extends React.Component{
 
 	render(){
 		const { nodeData, isFNStatsLoading } = this.props
-	
+		var total = _.round(_.sumBy(nodeData, d => {
+					 	return d.status === 'paid'? new Decimal(d.zen).toNumber(): 0
+					 }), 9) 
+		var totalReview = _.round(_.sumBy(nodeData, d=> {
+					 	return d.status === 'review'? new Decimal(d.zen).toNumber(): 0
+					 }), 9)
+
 		const columns = [
 			{
 			    Header: 'Payment Index',
@@ -59,7 +65,7 @@ class Node extends React.Component{
 			    Footer: row=> (
 					<div>
 						<strong>Total:</strong>{' '}
-						<span>{ row.data.length } {' '} Payments</span>
+						<span>{ row.data.length }</span>
 					</div>
 				)
 			},
@@ -72,18 +78,10 @@ class Node extends React.Component{
 				Header: 'Zen',
 				accessor: 'zen',
 				className: 'tc',
-				Footer: row=> {
-					 let total = _.round(_.sumBy(row.data, d => {
-					 	return d.status === 'paid'? new Decimal(d.zen).toNumber(): 0
-					 }), 9) 
-
-					 let totalReview = _.round(_.sumBy(row.data, d=> {
-					 	return d.status === 'review'? new Decimal(d.zen).toNumber(): 0
-					 }), 9)
-					 
+				Footer: row=> {	 
 					return	<div data-tip={totalReview} data-for='total'>
-									<strong>Total paid:</strong>{' '}
-									<span >{ total } {' '} Zen</span> 
+									<strong>Total:</strong>{' '}
+									<span >{ total }</span> 
 							</div>
 				}
 			},
