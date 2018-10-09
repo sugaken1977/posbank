@@ -20,7 +20,7 @@ class PasswordField extends React.Component{
           component={ renderField }
           label='Password'
           variant='outlined'
-          className={classNames(classes.margin, classes.textField, classes.customHeight)}
+          className={classNames(classes.textField, classes.customHeight)}
           InputProps={{
             endAdornment: (
               <InputAdornment position="end">

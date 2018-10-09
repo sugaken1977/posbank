@@ -1,22 +1,22 @@
 /** {
   box-sizing: border-box;
-}
+}*/
 
-body,
+/*body,
 html {
   background-color: #f6f9fc;
   font-size: 18px;
   font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
-}
+}*/
 
-h1 {
+/*h1 {
   color: #32325d;
   font-weight: 400;
   line-height: 50px;
   font-size: 40px;
   margin: 20px 0;
   padding: 0;
-}
+}*/
 
 .Checkout {
   margin: 0 auto;
@@ -25,11 +25,11 @@ h1 {
   padding: 0 5px;
 }
 
-label {
+/*label {
   color: #6b7c93;
   font-weight: 300;
   letter-spacing: 0.025em;
-}
+}*/
 
 .stripeBtn {
   white-space: nowrap;
@@ -53,11 +53,11 @@ label {
   margin-top: 10px;
 }
 
-form {
+/*form {
   margin-bottom: 40px;
   padding-bottom: 40px;
   border-bottom: 3px solid #e6ebf1;
-}
+}*/
 
 .stripeBtn:hover {
   color: #fff;
@@ -67,13 +67,11 @@ form {
   box-shadow: 0 7px 14px rgba(50, 50, 93, .10), 0 3px 6px rgba(0, 0, 0, .08);
 }
 .stripeBtn:active {
-
     opacity: .8;
     transition: opacity .15s ease-out;
-
 }
 
-input,
+/*input,*/
 .StripeElement {
   display: block;
   margin: 10px 0 20px 0;
@@ -82,17 +80,17 @@ input,
   font-size: 1em;
   font-family: 'Source Code Pro', monospace;
   box-shadow: rgba(50, 50, 93, 0.14902) 0px 1px 3px, rgba(0, 0, 0, 0.0196078) 0px 1px 0px;
-  border: 0;
-  outline: 0;
+  border: 1px solid rgba(0, 0, 0, 0.23);
+  /*outline: 0;*/
   border-radius: 4px;
   background: white;
 }
 
-input::placeholder {
+/*input::placeholder {
   color: #aab7c4;
 }
 
-input:focus,
+input:focus,*/
 .StripeElement--focus {
   box-shadow: rgba(50, 50, 93, 0.109804) 0px 4px 6px, rgba(0, 0, 0, 0.0784314) 0px 1px 3px;
   -webkit-transition: all 150ms ease;
@@ -102,4 +100,4 @@ input:focus,
 .StripeElement.IdealBankElement,
 .StripeElement.PaymentRequestButton {
   padding: 0;
-}*/
+}

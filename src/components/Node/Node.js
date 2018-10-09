@@ -13,7 +13,8 @@ import Loading from '../Loading/Loading'
 
 const initialState = {
 	isLoading: true,
-	nodeData: []
+	nodeData: [],
+	windowSize: window.innerWidth
 }
 
 
@@ -21,28 +22,24 @@ class Node extends React.Component{
 	constructor(props){
 		super(props)
 		this.state = initialState
+		this.handleResize = this.handleResize.bind(this);
 	}
 	componentDidMount(){
 		sleep(1000).then(()=> this.setState({isLoading: false}))
+		window.addEventListener("resize", this.handleResize);
 	}
 
-		
-	// 	this.setState({
-	// 		isFNStatsLoading: this.props.isFNStatsLoading, 
-	// 		nodeData: this.props.nodeData})
-	// }
-
-	// static getDerivedStateFromProps(nextProps, prevState){
-	// 	// console.log(nextProps)
-	// 	// console.log(prevState)
-	// 	if(nextProps.isFNStatsLoading !== prevState.isFNStatsLoading){
-	// 		return {
-	// 			isFNStatsLoading: nextProps.isFNStatsLoading,
-	// 			nodeData: nextProps.nodeData 	
-	// 		}
-	// 	}
-	// 	 return null;
-	// }
+	componentWillMount(){
+		this.handleResize()
+		window.addEventListener("resize", this.handleResize);
+	}
+	componentWillUnmount() {
+      window.addEventListener("resize", this.handleResize);
+    }	
+    handleResize() {
+        this.setState({WindowSize: window.innerWidth})
+        this.forceUpdate()
+    }
 
 	render(){
 		const { nodeData, isFNStatsLoading } = this.props
@@ -106,7 +103,8 @@ class Node extends React.Component{
 				}
 			},
 		]
-		
+		let dynamicColumns = columns
+		this.state.WindowSize <  500? dynamicColumns.splice(3,2): null
 		return !this.state.isLoading? (
 			<div>
 				<ReactTooltip id='total' type='dark' 
@@ -114,7 +112,7 @@ class Node extends React.Component{
 				/>
 				  	
 
-				<ReactTable data = { nodeData } columns = { columns } 
+				<ReactTable data = { nodeData } columns = { dynamicColumns } 
 							defaultPageSize={10}
          					className="-highlight"
 				/>

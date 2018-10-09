@@ -32,18 +32,28 @@ const db =[
 ]
 const initialState ={
 	isClick:false,
-	isLoading: true
+	isLoading: true,
+	windowSize: window.innerWidth
 }
 class MasterNodeList extends React.Component {
 	constructor(props){
 		super(props)
 		this.state= initialState
+		this.handleResize = this.handleResize.bind(this);
+	}
+	componentWillMount(){
+		this.handleResize()
+		window.addEventListener("resize", this.handleResize);
 	}
 	componentDidMount(){
 		let coin = 'zen'
 		this.props.onFetchAllNodeStats(coin)
 		this.props.onFetchNodeStats(coin)
+		window.addEventListener("resize", this.handleResize);
 	}
+	componentWillUnmount() {
+      window.addEventListener("resize", this.handleResize);
+    }
 	// componentDidUpdate(){
 	// 	console.log(this.state)
 	// }
@@ -53,9 +63,13 @@ class MasterNodeList extends React.Component {
 			isLoading: true
 		})
 	}
+
+	handleResize() {
+        this.setState({WindowSize: window.innerWidth})
+        this.forceUpdate()
+    }
 	render(){
 			const { allNodeData, price, onFetchNodeStats, nodeData, isFNStatsLoading } = this.props
-			
 			const columns = [
 			{
 			    Header: 'Index',
@@ -79,17 +93,19 @@ class MasterNodeList extends React.Component {
 				accessor: 'coin'
 			},
 			{
-				Header: 'Balance (Coin)',
+				Header: 'Balance',
 				accessor: 'allNodeBalance'
 			},
 			{
 				Header: 'Price',
 				id:'price',
-				Cell: row => <span>{`${_.round(row.original.price, 2)} USD`}</span>
+				Cell: row => <span>{`${_.round(row.original.price, 2)} USD`}</span>,
+				// show: row => this.state.WindowSize <  500?false: true,
+				// Cell: row => <span className={this.state.WindowSize <  500?'dn': null}>{`${_.round(row.original.price, 2)} USD`}</span>
 
 			},
 			{
-				Header: 'Balance (Fiat)',
+				Header: 'Fiat reference',
 				id: 'fiatBalance',
 				Cell: row =>{
 					let {price, allNodeBalance}= row.original
@@ -102,11 +118,14 @@ class MasterNodeList extends React.Component {
 			}
 		]
 		// console.log(this.state.isLoading)
+		let dynamicColumns = columns
+		this.state.WindowSize <  500? dynamicColumns.splice(3,3): null
+		console.log(this.state)
 		return allNodeData[0]  ? (
 				!this.state.isClick? (
 					<div className='mt4 center w-80'>
 						<ReactTable data={allNodeData} 
-						columns={columns}
+						columns={dynamicColumns}
 						defaultPageSize={5}
 						className="-highlight"
 						getTdProps={(state, rowInfo, column, instance) => {

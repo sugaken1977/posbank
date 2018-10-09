@@ -3,83 +3,74 @@ import { Field, reduxForm } from 'redux-form'
 import validate from './validate'
 import asyncValidate from './asyncValidate'
 import { Redirect, NavLink } from 'react-router-dom'
-
+import PasswordField from '../PasswordField/PasswordField'
+import EmailField from '../EmailField/EmailField'
 import TextField from '@material-ui/core/TextField';
+import EmailFieldSignup from '../EmailFieldSignup/EmailFieldSignup'
 
+import Button from '@material-ui/core/Button';
+import IconButton from '@material-ui/core/IconButton';
+import Paper from '@material-ui/core/Paper';
+import classNames from 'classnames';
+import { styles } from '../../modules/modules'
+import { withStyles } from '@material-ui/core/styles';
+import Typography from '@material-ui/core/Typography';
+import BackIcon from '@material-ui/icons/KeyboardArrowLeft'
 
-const renderField = ({
-  input,
-  label,
-  type,
-  component,
-  meta: { asyncValidating, touched, valid, error },
-  ...custom
-}) => (
-  <TextField 
-    {...input}
-    {...custom}
-    type={type}
-    helperText ={touched && error || touched && valid}
-  />
-  /*<div>
-    <label>{label}</label>
-    <div className={asyncValidating ? 'async-validating text' : ''}>
-      <input {...input} type={type} placeholder={label} autoComplete={label} component={TextField}/>
-      {touched && error && <span>{error}</span>}
-      {touched && valid && <span>✓</span>}
-    </div>
-  </div>*/
-
-)
-
-const Signup = props => {
-  const { handleSubmit, pristine, reset, submitting, onSignup, redirectSignup, onBack, onNext } = props
-  
-if(redirectSignup) {
-  return <Redirect to={{pathname: '/signup-thankyou'}} />;
+const SignupButton = props => {
+  // console.log(props)
+  return <button {...props} type="submit" disabled={this.submitting}>Signup</button>
 }
-return (
-   <div className='tc'>
-    <form onSubmit={handleSubmit(onSignup)} className='flex flex-column w-30 center'>  
+const initialState ={
+  showPassword: false
+}
+class Signup extends React.Component {
+  constructor(props){
+    super(props)
+    this.state = initialState
+  }
+  handleClickShowPassword = () => {
+     this.setState({ showPassword: !this.state.showPassword });
+    };
 
-        <Field
-          name="email"
-          type="text"
-          component={renderField}
-          label="メールアドレス"
-        />
+render(){
+  const { handleSubmit, pristine, reset, submitting, onSignup, redirectSignup, onBack, 
+    onNext, classes } = this.props
+  const {showPassword} = this.state
 
-        <Field
-          name="password"
-          type="password"
-          component={renderField}
-          label="パスワード"
-        />
 
-        <Field
-          name="pwConfirm"
-          type="password"
-          component={renderField}
-          label="パスワード再入力"
-        />
-        
+  if(redirectSignup) {
+    return <Redirect to={{pathname: '/signup-thankyou'}} />;
+  }
+  return (
+     <div className='tc w-100 dt vh-75'>
+      <div className='v-mid tc dtc'>
+      <Paper className={classNames(classes.paper, classes.center, classes.pa4)} elevation={3}>
+        <form onSubmit={handleSubmit(onSignup)} className='flex flex-column center '>  
+            <EmailFieldSignup />
+            <PasswordField handleClickShowPassword ={ this.handleClickShowPassword } 
+              showPassword ={ showPassword }/>     
+          <div>
+           <div className='flex flex-row justify-center'>
+             <IconButton variant="contained" className={classNames(classes.button)}
+             component={NavLink} to="/select-coin">
+                <BackIcon />
+              </IconButton>
 
-      <div>
-
-        <button type="button" disabled={submitting} onClick={onBack}>
-          Back
-        </button>
-
-        <button type="submit" disabled={submitting}>
-          Sign Up
-        </button>
-        
+              <Button variant="contained" className={classNames(classes.button)}
+                    component={SignupButton}>
+              </Button>
+            </div>
+          </div>
+        </form>
+        </Paper>
       </div>
-    </form>
-  </div>
-  )
+    </div>
+    )
+  }
 }
 
+Signup = withStyles(styles)(Signup)
 export default reduxForm({
   form: 'signup',
   //  onSubmitSuccess: (result, dispatch, props) => {

@@ -2,16 +2,17 @@ import React from 'react'
 import { Field, reduxForm } from 'redux-form'
 import { withStyles } from '@material-ui/core/styles';
 import classNames from 'classnames';
-import { styles, renderField } from '../../modules/modules'
+import { styles, asyncRenderField } from '../../modules/modules'
 
 
-class EmailField extends React.Component{
+
+class EmailFieldSignup extends React.Component{
 	render(){
 		const { classes, handleClickShowPassword, showPassword } = this.props;
 		return <Field
 	          name="email"
 	          type='text'
-	          component={ renderField }
+	          component={ asyncRenderField }
 	          label='Email'
 	          variant='outlined'
 	          className={classNames(classes.textField)}
@@ -19,4 +20,4 @@ class EmailField extends React.Component{
 	}
 }
 
-export default withStyles(styles)(EmailField)
+export default withStyles(styles)(EmailFieldSignup)

@@ -13,7 +13,7 @@ const asyncValidate = async (values /*, dispatch */) => {
   	.then(response => response.json())
   	.then(data => {
   		if(data.taken){
-  			var error = {email: 'That email is taken'}
+  			var error = {email: 'Email is taken'}
     		throw error;
   		}
   	})

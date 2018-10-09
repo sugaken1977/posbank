@@ -42,9 +42,9 @@ const Exchange = props => {
   	onGenerateTransaction, transactionId, outputAmount, onFetchOrders, coin, isAuthenticated, inputCoin} = props
   const selectInputCoin= true;
   let selectedCoin = 'Horizen'
-  if(transactionId) {
-  return <Redirect to={{pathname: '/send'}} />;
-	}
+ //  if(transactionId) {
+ //  return <Redirect to={{pathname: '/send'}} />;
+	// }
   return isAuthenticated? (
   	<div>
   		<div className='flex flex-row'>

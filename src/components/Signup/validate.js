@@ -8,9 +8,11 @@ const validate = values => {
 
   if (!values.password) {
     errors.password = 'Required'
-  } else if(values.password !== values.pwConfirm){
-    errors.pwConfirm = 'Password does not match'
   }
+  // } else if(values.password !== values.pwConfirm){
+  //   errors.pwConfirm = 'Password does not match'
+  // }
+  // for future development
 
   if(!values.pwConfirm){
     errors.pwConfirm = 'Required'

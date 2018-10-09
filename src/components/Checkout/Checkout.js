@@ -3,6 +3,7 @@ import StripeCheckout from '../StripeCheckout/StripeCheckout'
 // import MoneyButton from '@moneybutton/react-money-button'
 import { Redirect } from 'react-router-dom'
 import { NavLink } from 'react-router-dom';
+import OrderedCoins from '../OrderedCoins/OrderedCoins'
 
 
 
@@ -24,17 +25,21 @@ class Checkout extends Component {
 		}
 		return isAuthenticated? isFOLoading? <h1>Loading...</h1>
 		: displayCoin? (
-			<div>
-				<div>
-					<div className='mv2'>
-						<span>Masternode's name: </span>
-						<span>{displayCoin}</span>
-					</div>
-					<div className='mv2'>
-						<span>Node quantity: </span>
-						<span>1</span>
-					</div>
-				</div>
+			<div className='tc w-100 dt vh-75'>
+      			<div className='v-mid tc dtc'>
+				{
+				// <div>
+				// 	<div className='mv2'>
+				// 		<span>Masternode's name: </span>
+				// 		<span>{displayCoin}</span>
+				// 	</div>
+				// 	<div className='mv2'>
+				// 		<span>Node quantity: </span>
+				// 		<span>1</span>
+				// 	</div>
+				// </div>
+					}
+				<OrderedCoins displayCoin={ displayCoin } />
 				<StripeCheckout onCreateToken = { onCreateToken} 
 		          zipcode ={ zipcode }
 		          onCheckStripe = { onCheckStripe }
@@ -53,6 +58,7 @@ class Checkout extends Component {
 			  //     devMode= "true"
 			  //   />
 			}
+				</div>
 			</div>
 		)
 		: <h1>No masternode detected</h1>

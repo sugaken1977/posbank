@@ -7,7 +7,6 @@ class CardSection extends React.Component {
   	const zipcode= 22222
     return (
       <label>
-        Card details
         <CardElement value={{postalCode: `${zipcode}`} }style={{base: {fontSize: '18px'}}} />
 
       </label>
